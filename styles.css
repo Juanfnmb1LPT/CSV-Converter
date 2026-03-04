@@ -1,0 +1,291 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root{
+  --bg:#eef6ff;
+  --bg-2:linear-gradient(180deg,#f5f9ff 0%, #eef6ff 60%);
+  --card:#ffffff;
+  --accent:#0ea5ff;
+  --accent-2:#2563eb;
+  --muted:#6b7280;
+  --shadow: 0 18px 50px rgba(14,42,99,0.12);
+  --glass: rgba(255,255,255,0.6);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Arial;
+  background: var(--bg-2);
+  color:#071331;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+.site{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:72px 20px;
+}
+
+.card{
+  width:100%;
+  max-width:980px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,252,255,0.95));
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:36px;
+  border: 1px solid rgba(37,99,235,0.06);
+  backdrop-filter: blur(6px);
+}
+
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.logo{
+  /* show only the PNG centered — remove ring/background/shadow */
+  width:auto;
+  height:auto;
+  display:block;
+  margin:0 auto 12px;
+  background:transparent;
+  border:none;
+  box-shadow:none;
+}
+.logo img{
+  display:block;
+  margin:0 auto;
+  width:min(28vw,120px);
+  height:auto;
+  object-fit:contain;
+  object-position:center;
+}
+
+
+.title{font-size:20px;font-weight:700}
+.lead{color:var(--muted);margin-top:4px;margin-bottom:18px}
+
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+input[type=file]{padding:10px;border-radius:8px;border:1px solid #e6edf3;background:#fff}
+/* .btn applied to both <a> and <button> elements */
+.btn{display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#fff;padding:12px 20px;border-radius:12px;border:none;cursor:pointer;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(14,45,110,0.12);transition:transform .14s ease,box-shadow .14s ease}
+.btn:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(14,45,110,0.14)}
+.btn.secondary{background:transparent;color:var(--accent-2);border:2px solid rgba(37,99,235,0.12);backdrop-filter: blur(4px)}
+
+/* Hero / index-specific styles */
+.hero{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px 12px}
+.hero-title{font-size:34px;font-weight:800;margin:8px 0;line-height:1.02}
+.hero-sub{color:var(--muted);max-width:760px;margin-bottom:4px}
+.hero-controls{display:flex;gap:14px;justify-content:center;margin-top:4px}
+.note-container{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  align-items:center;
+  align-content:center;
+  margin:4px auto 0;
+  max-width:760px;
+  box-sizing:border-box;
+  flex-wrap:wrap;
+  padding:0 8px;
+}
+
+/* Stacked layout used on the Update Quantity page */
+.note-container > *{
+  min-width:0;
+  flex:1 1 180px;
+  box-sizing:border-box;
+  margin:6px;
+}
+
+/* Tighter stacking for the Update Quantity rows (little to no vertical gap) */
+.note-container.note-quantity{
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+}
+
+.note-container.note-quantity > *{
+  display:flex;
+  justify-content:center;
+  margin:2px 0;
+  flex:0 0 auto;
+}
+
+/* Make the Update Quantity download button match file input width */
+.note-container.note-quantity .btn{
+  flex:0 0 auto;
+  width:300px;
+  max-width:300px;
+}
+
+.note-container input[type=file],
+.note-container .btn{
+  flex:1 1 180px;
+  max-width:320px;
+  min-width:120px;
+  height:40px;
+  padding:8px 14px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  font-size:14px;
+}
+
+/* Style the file input's selector button for modern browsers */
+.note-container input[type=file]::file-selector-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:100%;
+  padding:8px 14px;
+  border-radius:10px;
+  background:linear-gradient(90deg,var(--accent-2),var(--accent));
+  color:#fff;
+  border:0;
+  margin-right:10px;
+}
+
+/* WebKit legacy */
+.note-container input[type=file]::-webkit-file-upload-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:100%;
+  padding:8px 14px;
+  border-radius:10px;
+  background:linear-gradient(90deg,var(--accent-2),var(--accent));
+  color:#fff;
+  border:0;
+  margin-right:10px;
+}
+
+/* Center filename text vertically inside the input and keep layout consistent */
+.note-container input[type=file]{
+  display:flex;
+  align-items:center;
+  text-align:left;
+  padding-left:8px;
+  padding-right:8px;
+  box-sizing:border-box;
+}
+
+/* Custom file-control (label) so choose + filename align vertically */
+.file-control{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:6px 8px;
+  border-radius:10px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,250,255,0.98));
+  border:1px solid rgba(14,45,110,0.06);
+  min-width:260px;
+  width:300px;
+  max-width:300px;
+  cursor:pointer;
+  transition:transform .14s ease,box-shadow .14s ease;
+}
+.file-control .file-btn{
+  background:linear-gradient(90deg,var(--accent-2),var(--accent));
+  color:#fff;
+  padding:6px 10px;
+  border-radius:8px;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:26px;
+  font-size:13px;
+}
+.file-control:hover .file-btn{
+  background: linear-gradient(90deg,#1f4fc0,#0a8be0);
+}
+.file-control:active .file-btn{
+  background: linear-gradient(90deg,#1946a8,#0776c7);
+}
+.file-control .file-name{
+  color:var(--muted);
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:220px;
+}
+.file-control input[type=file]{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:0;
+  cursor:pointer;
+}
+
+.file-control:hover{
+  transform:translateY(-3px);
+  box-shadow:0 18px 40px rgba(14,45,110,0.14);
+}
+.file-control:active{
+  transform:translateY(-1px);
+}
+
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+
+/* center note text inside cards for clearer alignment on single-control pages */
+.card .note{ text-align:center; margin-top:10px }
+
+/* Optional increased spacing for pages that need more breathing room */
+.card.spacious .lead{ margin-bottom:8px }
+.card.spacious .hero-sub{ margin-bottom:6px }
+.card.spacious .hero-controls{ margin-top:15px }
+.card.spacious .note-container{ margin-top:2px }
+.card.spacious .note{ margin-top:8px }
+
+/* Tablet / medium screens: stack label above input but keep compact widths */
+@media (max-width:900px){
+  .note-container.note-quantity > *{
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+  }
+}
+
+@media (max-width:640px){
+  .card{padding:20px}
+  .controls{flex-direction:column;align-items:stretch}
+  .hero-title{font-size:22px}
+  .hero-sub{font-size:14px}
+  .note-container{flex-direction:column;align-items:stretch;gap:10px;padding:0}
+  .note-container .file-control,
+  .note-container .btn{flex:1 1 100%}
+
+  /* Ensure the Update Quantity layout also stacks nicely on small screens */
+  .note-container.note-quantity{align-items:center;gap:8px;padding:0}
+  .note-container.note-quantity .file-control{
+    flex:0 0 auto;
+    max-width:320px;
+    width:100%;
+  }
+  .note-container.note-quantity .btn{
+    flex:0 0 auto;
+    max-width:320px;
+    width:100%;
+  }
+  .file-control{
+    max-width:320px;
+    width:100%;
+    padding:8px;
+    justify-content:flex-start;
+    box-sizing:border-box;
+    margin:0 auto;
+  }
+  .file-control .file-name{max-width:60%; text-align:left; margin-left:8px}
+  .file-control .file-btn{height:auto;padding:6px 10px}
+
+  /* Stack hero action buttons full-width on small screens */
+  .hero-controls{flex-direction:column;gap:12px}
+  .hero-controls .btn{width:100%;justify-content:center}
+}
+
+.back{display:inline-block;color:var(--accent-2);text-decoration:none;margin-bottom:12px}

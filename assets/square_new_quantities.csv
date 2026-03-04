@@ -1,0 +1,12 @@
+Reference Handle,Token,Item Name,Customer-facing Name,Variation Name,SKU,Description,Categories,Reporting Category,GTIN,Item Type,Weight (lb),Social Media Link Title,Social Media Link Description,Price,Online Sale Price,Archived,Sellable,Contains Alcohol,Stockable,Skip Detail Screen in POS,Option Name 1,Option Value 1,"Current Quantity LPT Realty, LLC","New Quantity LPT Realty, LLC","Stock Alert Enabled LPT Realty, LLC","Stock Alert Count LPT Realty, LLC"
+st-pete-black,,St Pete Black,St Pete Black,Small,ST-PETE-BLACK-BLK-S,,T-Shirt,,,Physical good, ,,,25,,Y,,N, ,N,Size,Small,3,,TRUE,
+st-pete-black,,,,Medium,ST-PETE-BLACK-BLK-M,,T-Shirt,,,Physical good, ,,,25,,N,,N, ,N,Size,Medium,0,,TRUE,
+st-pete-black,,,,Large,ST-PETE-BLACK-BLK-L,,T-Shirt,,,Physical good, ,,,25,,N,,N, ,N,Size,Large,7,,TRUE,
+st-pete-black,,,,X-Large,ST-PETE-BLACK-BLK-XL,,T-Shirt,,,Physical good, ,,,25,,N,,N, ,N,Size,X-Large,1,,TRUE,
+st-pete-black,,,,XX-Large,ST-PETE-BLACK-BLK-XXL,,T-Shirt,,,Physical good, ,,,25,,N,,N, ,N,Size,XX-Large,0,,TRUE,
+copy-of-st-pete-black,,Tie Dye Race Pink Limited Edition,Tie Dye Race Pink Limited Edition,Small,TIE-DYE-RACE-PINK-PNK-S,,T-Shirt,,,Physical good, ,,,45,,Y,,N, ,N,Size,Small,0,,TRUE,
+copy-of-st-pete-black,,,,Medium,TIE-DYE-RACE-PINK-PNK-M,,T-Shirt,,,Physical good, ,,,45,,N,,N, ,N,Size,Medium,0,,TRUE,
+copy-of-st-pete-black,,,,Large,TIE-DYE-RACE-PINK-PNK-L,,T-Shirt,,,Physical good, ,,,45,,N,,N, ,N,Size,Large,0,,TRUE,
+copy-of-st-pete-black,,,,X-Large,TIE-DYE-RACE-PINK-PNK-XL,,T-Shirt,,,Physical good, ,,,45,,N,,N, ,N,Size,X-Large,0,,TRUE,
+lpt-pen,,Pen,Pen,Black,pen-black,,Accessories,,,Physical good, ,,,5,,N,,N, ,N,Color,Black,18,,TRUE,
+lpt-pen,,,,Blue,pen-blue,,Accessories,,,Physical good, ,,,6,,N,,N, ,N,Color,Blue,5,,TRUE,
