@@ -1,3 +1,23 @@
+# Deployed site
+
+The main branch is deployed via GitHub Pages at:
+
+- https://juanfnmb1lpt.github.io/CSV-Converter/
+
+# Running the project (live view)
+
+For the best experience when developing locally, run the project with a live-reloading dev server so your browser refreshes automatically when you save changes:
+
+- In VS Code, install the **Live Server** extension (by Ritwick Dey).
+- Open this folder in VS Code.
+- Right‑click `index.html` and choose **Open with Live Server**.
+
+Or via Node.js:
+
+- Open a terminal in this folder.
+- Run: `npx live-server`
+- Your default browser will open; it will auto‑reload on file save.
+
 # CSV Shopify & Square Converter
 
 A small, browser-based toolset for working with ecommerce CSV files. It runs entirely in the browser — no data is sent to any server.
