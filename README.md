@@ -1,87 +1,75 @@
-# Deployed site
+# CSV Shopify & Square Converter (Vue)
 
-The main branch is deployed via GitHub Pages at:
+Browser-based CSV tools for ecommerce workflows, now implemented as a Vue 3 single-page app with Vite.
 
-- https://juanfnmb1lpt.github.io/CSV-Converter/
+All parsing and processing runs locally in the browser. No file data is uploaded to a server.
 
-# Running the project (live view)
+## Features
 
-For the best experience when developing locally, run the project with a live-reloading dev server so your browser refreshes automatically when you save changes:
+- Shopify → Square conversion (`square_import.csv` output)
+- Update Shopify variant quantities from a Square inventory CSV
+- Client-side CSV parsing via PapaParse for both flows
 
-- In VS Code, install the **Live Server** extension (by Ritwick Dey).
-- Open this folder in VS Code.
-- Right‑click `index.html` and choose **Open with Live Server**.
+## Run locally
 
-Or via Node.js:
+Requirements:
 
-- Open a terminal in this folder.
-- Run: `npx live-server`
-- Your default browser will open; it will auto‑reload on file save.
+- Node.js 18+
 
-# CSV Shopify & Square Converter
+Commands:
 
-A small, browser-based toolset for working with ecommerce CSV files. It runs entirely in the browser — no data is sent to any server.
+```bash
+npm install
+npm run dev
+```
 
-There are two main flows:
+Open the URL shown by Vite (usually `http://localhost:5173`).
 
-- **Shopify → Square CSV Converter** (`shopify-to-square.html`)
-- **Update Shopify Quantity from Square** (`update-quantity.html`)
+## Build
 
-## 1. Shopify → Square CSV Converter
+```bash
+npm run build
+npm run preview
+```
 
-**Goal:** Take a standard Shopify product export CSV and generate a new CSV ready to import into Square.
+The production build is generated in `dist/`.
 
-**How it works:**
-- Uses PapaParse in the browser to read the uploaded Shopify CSV.
-- For each variant row with a `Variant SKU`, it:
-  - Inherits product-level details (description, type, vendor, options) when needed.
-  - Strips HTML from the `Body (HTML)` field so descriptions are plain text.
-  - Maps Shopify fields into a Square-friendly header set.
-- Builds a new CSV and automatically downloads `square_import.csv`.
+## GitHub Pages deployment
 
-**Steps to use:**
-1. Open `shopify-to-square.html` in a modern browser (Chrome, Edge, Safari, etc.).
-2. Click **Choose File** and select a Shopify product export CSV.
-3. Click **Convert & Download**.
-4. Import the resulting `square_import.csv` into Square.
+This Vue app works on GitHub Pages.
 
-## 2. Update Shopify Quantity from Square
+If deploying as a project site (`https://<user>.github.io/CSV-Converter/`), build with:
 
-**Goal:** Take an existing Shopify product CSV and a Square inventory CSV, then overwrite Shopify variant quantities with the values from Square.
+```bash
+npm run build:gh-pages
+```
 
-**How it works:**
-- A lightweight in-browser CSV parser reads both files (no external libraries required).
-- The script:
-  - Parses the Shopify CSV and finds the `Variant SKU` and `Variant Inventory Qty` columns.
-  - Parses the Square CSV and looks for a SKU column (header containing `sku`) and a quantity column (header containing `current quantity`).
-  - Builds a `SKU → quantity` map from the Square file.
-  - For each Shopify row, if the `Variant SKU` exists in the map, it replaces `Variant Inventory Qty` with the Square quantity.
-- Outputs a new CSV named like `<original>-updated-quantities.csv` and triggers a download.
+Then publish the `dist/` contents to your Pages branch.
 
-**Steps to use:**
-1. Open `update-quantity.html` in a modern browser.
-2. Under **Shopify CSV (old quantities)**, choose your Shopify export.
-3. Under **Square CSV (new quantities)**, choose your Square inventory CSV.
-4. Click **Download Updated Shopify CSV**.
-5. Import the resulting file back into Shopify.
+Routing uses hash mode (`/#/`) so direct page refresh works on GitHub Pages without server rewrites.
 
-## Data & privacy
+## App routes
 
-- All parsing and processing happens **locally in your browser**.
-- Files are never uploaded to any server.
-- You can use this tool completely offline after the first load (the only external dependency is the PapaParse CDN on the Shopify → Square page).
+- `/` Redirects to Shopify → Square tool
+- `/#/shopify-to-square` Shopify → Square tool
+- `/#/update-quantity` Update Shopify quantity tool
 
-## File overview
+The app uses a persistent left dashboard for navigation between tools.
 
-- `index.html` – Landing page with navigation to both tools.
-- `shopify-to-square.html` – UI for converting Shopify CSVs into a Square import CSV.
-- `update-quantity.html` – UI for updating Shopify variant quantities using Square CSV data.
-- `shop_to_square.js` – Logic for the Shopify → Square conversion (uses PapaParse).
-- `update_quantity.js` – Logic for syncing quantities from Square into a Shopify CSV.
-- `styles.css` – Shared styling, including the animated logo treatment and responsive layout.
+## Project structure
 
-## Notes for reviewers
+- `src/views/ShopifyToSquareView.vue` Shopify → Square UI
+- `src/views/UpdateQuantityView.vue` Quantity update UI
+- `src/lib/convertShopToSquare.js` Shopify → Square transformation logic
+- `src/lib/updateInventoryFromSquare.js` Quantity sync logic
+- `src/lib/downloadCsv.js` Browser CSV download helper
+- `src/router/index.js` Vue Router setup
+- `styles.css` Shared styling
 
-- The code is intentionally client-side and dependency-light for easy distribution.
-- Error messages are user-focused (e.g. missing required headers, empty files) to make failures clear during demos.
-- CSV parsing in `update_quantity.js` is purpose-built for this workflow and handles typical quoted fields, commas in values, and CR/LF line endings.
+## Test data
+
+Sample CSV files are in `assets/`:
+
+- `shopify_test.csv`
+- `shopify_large_test.csv`
+- `square_new_quantities.csv`
