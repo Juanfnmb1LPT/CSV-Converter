@@ -12,6 +12,8 @@ import logoUrl from '../assets/lpt_realty.png';
 
       <nav class="dashboard-nav">
         <router-link class="dash-link" to="/">Home</router-link>
+        <router-link class="dash-link" to="/pre-con">Pre-Con Steps</router-link>
+        <router-link class="dash-link" to="/post-con">Post-Con Steps</router-link>
         <router-link class="dash-link" to="/shopify-to-square">Shopify to Square</router-link>
         <router-link class="dash-link" to="/update-quantity">Update Quantity</router-link>
       </nav>

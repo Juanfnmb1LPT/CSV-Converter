@@ -246,7 +246,7 @@ input[type=file] {
   color: #0b2545;
   margin-top: 12px;
   line-height: 1.45;
-text-align: center;
+  text-align: center;
   margin-left: auto;
   margin-right: auto;
   font-weight: 300;
@@ -265,11 +265,11 @@ text-align: center;
   font-size: 15px;
   border-radius: 12px;
   color: #082145;
-  border: 1px solid rgba(8,33,69,0.06);
+  border: 1px solid rgba(8, 33, 69, 0.06);
 }
 
 .dash-link:hover {
-  background: linear-gradient(90deg, rgba(8,33,69,0.06), rgba(10,86,160,0.05));
+  background: linear-gradient(90deg, rgba(8, 33, 69, 0.06), rgba(10, 86, 160, 0.05));
 }
 
 /* Active nav: richer, darker blue gradient */
@@ -283,6 +283,30 @@ text-align: center;
 .home-card {
   text-align: center;
   padding: 48px;
+}
+
+.home-options {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.step-card {
+  max-width: 900px;
+}
+
+.step-list {
+  margin: 8px auto 0;
+  max-width: 760px;
+  padding-left: 22px;
+  line-height: 1.55;
+  color: #0f1f46;
+}
+
+.step-list li {
+  margin: 8px 0;
 }
 
 .hero-controls {
@@ -626,6 +650,16 @@ text-align: center;
   .hero-controls .btn {
     width: 100%;
     justify-content: center
+  }
+
+  .home-options {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .home-options .btn {
+    width: 100%;
+    max-width: 320px;
   }
 }
 
