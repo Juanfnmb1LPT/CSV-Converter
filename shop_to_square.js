@@ -34,55 +34,58 @@ function convertCSV() {
       ];
 
       let output = [squareHeaders];
-      let currentProduct = {};
-      let lastOptionName = "";
-      let lastOptionValue = "";
 
+      // Group rows by handle to ensure variants inherit only their product's data
+      const groups = {};
       data.forEach(row => {
-        const handle = row["Handle"];
-        const sku = row["Variant SKU"];
-        if (!sku) return;
+        const handle = row["Handle"] || "";
+        if (!groups[handle]) groups[handle] = [];
+        groups[handle].push(row);
+      });
 
-        // ---- Product info inheritance ----
-        if (row["Title"]) {
-          currentProduct = {
-            description: stripHTML(row["Body (HTML)"]),
-            category: row["Type"],
-            vendor: row["Vendor"],
-            option1: row["Option1 Value"] || ""
-          };
-        }
+      Object.keys(groups).forEach(handle => {
+        const group = groups[handle];
 
-        const finalTitle = row["Title"] || currentProduct.title || "";
-        const finalDescription = stripHTML(row["Body (HTML)"]) || currentProduct.description || "";
-        const finalCategory = row["Type"] || currentProduct.category || "";
-        const price = row["Variant Price"] || "";
-        const barcode = row["Variant Barcode"] || "";
-        const weight = " ";
-        const inventoryQty = row["Variant Inventory Qty"] || "0";
+        // Use the first row that includes a Title as the product-level source
+        const productRow = group.find(r => r["Title"]);
+        const base = {
+          title: productRow ? productRow["Title"] : "",
+          description: productRow ? stripHTML(productRow["Body (HTML)"]) : "",
+          category: productRow ? productRow["Type"] : "",
+          vendor: productRow ? productRow["Vendor"] : "",
+          option1: productRow ? (productRow["Option1 Value"] || "") : ""
+        };
 
-        const archived = (row["Status"] || "").toLowerCase() === "archived" ? "Y" : "N";
-        const sellable = "";
+        group.forEach(row => {
+          const sku = row["Variant SKU"];
+          if (!sku) return;
 
-        // ---- Dynamic Option Name / Value grouping ----
-        const optionName = row["Option1 Name"] || lastOptionName || "Title";
-        if (row["Option1 Name"]) lastOptionName = row["Option1 Name"];
+          const finalTitle = row["Title"] || base.title || "";
+          const finalDescription = stripHTML(row["Body (HTML)"]) || base.description || "";
+          const finalCategory = row["Type"] || base.category || "";
+          const price = row["Variant Price"] || "";
+          const barcode = row["Variant Barcode"] || "";
+          const weight = " ";
+          const inventoryQty = row["Variant Inventory Qty"] || "0";
 
-        const optionValue = row["Option1 Value"] || currentProduct.option1 || lastOptionValue || "Default";
-        if (row["Option1 Value"]) lastOptionValue = row["Option1 Value"];
+          const archived = (row["Status"] || "").toLowerCase() === "archived" ? "Y" : "N";
+          const sellable = "";
 
-        const variationName = optionValue;
+          const optionName = row["Option1 Name"] || "Title";
+          const optionValue = row["Option1 Value"] || base.option1 || "Default";
+          const variationName = optionValue;
 
-        const squareRow = [
-          handle, "", finalTitle, finalTitle, variationName,
-          sku, finalDescription, finalCategory, "", barcode,
-          "Physical good", weight, "", "",
-          price, "", archived, sellable, "N", " ", // <-- Stockable left blank
-          "N", optionName, optionValue,
-          "0", inventoryQty, "TRUE", "",
-        ];
+          const squareRow = [
+            handle, "", finalTitle, finalTitle, variationName,
+            sku, finalDescription, finalCategory, "", barcode,
+            "Physical good", weight, "", "",
+            price, "", archived, sellable, "N", " ",
+            "N", optionName, optionValue,
+            "0", inventoryQty, "TRUE", "",
+          ];
 
-        output.push(squareRow);
+          output.push(squareRow);
+        });
       });
 
       downloadCSV(output);
