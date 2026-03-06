@@ -1,13 +1,41 @@
 <script setup>
 import { computed, ref } from 'vue';
+import InfiniteCarousel from '../components/InfiniteCarousel.vue';
 import { convertShopifyToSquareCsv } from '../lib/convertShopToSquare';
 import { downloadCsv } from '../lib/downloadCsv';
+import preConStep1ImageA from '../../assets/pre-con_step1.png';
+import preConStep1ImageB from '../../assets/pre-con_step1_pt2.png';
+import preConStep3ImageA from '../../assets/pre-con_step3.png';
+import preConStep3ImageB from '../../assets/pre-con_step3_pt2.png';
 
 const csvFile = ref(null);
 const fileName = ref('No file chosen');
 const isProcessing = ref(false);
 const currentStage = ref(0);
 const hasConverted = ref(false);
+
+const stepVisuals = {
+  1: [
+    {
+      src: preConStep1ImageA,
+      alt: 'Shopify export screen for pre-conversion step 1.'
+    },
+    {
+      src: preConStep1ImageB,
+      alt: 'Additional Shopify export example for pre-conversion step 1.'
+    }
+  ],
+  3: [
+    {
+      src: preConStep3ImageA,
+      alt: 'Square import screen for pre-conversion step 3.'
+    },
+    {
+      src: preConStep3ImageB,
+      alt: 'Additional Square import example for pre-conversion step 3.'
+    }
+  ]
+};
 
 const stages = [
   {
@@ -90,7 +118,7 @@ async function onConvert() {
   <div class="card spacious tool-card step-card precon-stepper-card">
     <div class="hero precon-hero">
       <div class="hero-title">{{ currentContent.title }}</div>
-      <div class="hero-sub precon-subtitle">{{ currentContent.description }}</div>
+      <div v-if="currentStage === 0" class="hero-sub precon-subtitle">{{ currentContent.description }}</div>
     </div>
 
     <div class="stepper-progress" aria-label="Pre-conversion progress">
@@ -141,6 +169,13 @@ async function onConvert() {
         <p class="precon-copy">
           Export Shopify inventory CSV.
         </p>
+        <div class="precon-visual-card" aria-label="Step 1 visual guide">
+          <InfiniteCarousel
+            :slides="stepVisuals[1]"
+            label="Step 1 visual guide"
+            dot-label-prefix="Show step 1 image"
+          />
+        </div>
       </div>
 
       <div v-else-if="currentStage === 2" class="precon-panel">
@@ -178,7 +213,14 @@ async function onConvert() {
         <p class="precon-copy">
           Import the downloaded CSV into Square, then review the import results and resolve any warnings before you move on.
         </p>
-        <button class="btn secondary" type="button" @click="restartSteps">Start Over</button>
+        <div class="precon-visual-card" aria-label="Step 3 visual guide">
+          <InfiniteCarousel
+            :slides="stepVisuals[3]"
+            label="Step 3 visual guide"
+            dot-label-prefix="Show step 3 image"
+          />
+        </div>
+        <button class="btn" type="button" @click="restartSteps">Start Over</button>
       </div>
     </div>
 
@@ -223,6 +265,7 @@ async function onConvert() {
   gap: 14px;
   max-width: 760px;
   margin: 0 auto;
+  margin-top: -10px;
   width: 100%;
 }
 
@@ -237,17 +280,20 @@ async function onConvert() {
 }
 
 .stepper-track-wrap {
+  --stepper-circle-size: 36px;
+  --stepper-track-height: 6px;
+  --stepper-track-offset: 4px;
   position: relative;
-  padding: 8px 4px 0;
+  padding: var(--stepper-track-offset) 4px 0;
 }
 
 .stepper-track,
 .stepper-track-fill {
   position: absolute;
-  top: 24px;
+  top: calc(var(--stepper-track-offset) + (var(--stepper-circle-size) - var(--stepper-track-height)) / 2);
   left: 18px;
   right: 18px;
-  height: 6px;
+  height: var(--stepper-track-height);
   border-radius: 999px;
 }
 
@@ -354,6 +400,117 @@ async function onConvert() {
   color: #0f1f46;
 }
 
+.precon-visual-card {
+  width: min(100%, 420px);
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(11, 99, 214, 0.14);
+  box-shadow: 0 14px 32px rgba(14, 42, 99, 0.08);
+}
+
+.precon-visual-frame-wrap {
+  position: relative;
+}
+
+.precon-visual-frame {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  touch-action: pan-x pinch-zoom;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(240, 247, 255, 0.95), rgba(227, 238, 252, 0.9));
+  border: 1px solid rgba(18, 58, 138, 0.08);
+}
+
+.precon-visual-frame::-webkit-scrollbar {
+  display: none;
+}
+
+.precon-visual-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  object-fit: cover;
+  object-position: top center;
+  scroll-snap-align: center;
+}
+
+.precon-visual-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.precon-visual-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  border-radius: 999px;
+  background: rgba(10, 24, 55, 0.22);
+  backdrop-filter: blur(6px);
+  color: #123a8a;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+}
+
+.precon-visual-nav:hover {
+  background: rgba(10, 24, 55, 0.32);
+}
+
+.precon-visual-nav span {
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.precon-visual-nav.is-left {
+  left: 10px;
+}
+
+.precon-visual-nav.is-right {
+  right: 10px;
+}
+
+.precon-visual-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.precon-visual-dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(18, 58, 138, 0.18);
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.precon-visual-dot.is-active {
+  background: #0b63d6;
+  transform: scale(1.15);
+}
+
 .precon-convert-copy {
   max-width: 100%;
   margin-bottom: 6px;
@@ -395,6 +552,10 @@ async function onConvert() {
 }
 
 @media (max-width: 640px) {
+  .stepper-track-wrap {
+    --stepper-circle-size: 30px;
+  }
+
   .stepper-track,
   .stepper-track-fill {
     left: 12px;
@@ -425,6 +586,21 @@ async function onConvert() {
 
   .precon-copy {
     font-size: 16px;
+  }
+
+  .precon-visual-card {
+    padding: 12px;
+  }
+
+  .precon-visual-frame {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .precon-visual-nav {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
   }
 
   .precon-actions {

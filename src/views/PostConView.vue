@@ -1,7 +1,15 @@
 <script setup>
 import { computed, ref } from 'vue';
+import InfiniteCarousel from '../components/InfiniteCarousel.vue';
 import { updateShopifyInventoryCsv } from '../lib/updateInventoryFromSquare';
 import { downloadCsv } from '../lib/downloadCsv';
+import postConStep1ImageA from '../../assets/post-con-step1.png';
+import postConStep1ImageB from '../../assets/post-con-step1-pt2.png';
+import preConStep1ImageA from '../../assets/pre-con_step1.png';
+import preConStep1ImageB from '../../assets/pre-con_step1_pt2.png';
+import postConStep4ImageA from '../../assets/post-con-step4.png';
+import postConStep4ImageB from '../../assets/post-con-step4-pt2.png';
+import postConStep4ImageC from '../../assets/post-con-step4-pt3.png';
 
 const shopifyFile = ref(null);
 const squareFile = ref(null);
@@ -10,6 +18,43 @@ const squareName = ref('No file chosen');
 const isProcessing = ref(false);
 const currentStage = ref(0);
 const hasProcessed = ref(false);
+
+const stepVisuals = {
+  1: [
+    {
+      src: postConStep1ImageA,
+      alt: 'Square export screen for post-conversion step 1.'
+    },
+    {
+      src: postConStep1ImageB,
+      alt: 'Additional Square export example for post-conversion step 1.'
+    }
+  ],
+  2: [
+    {
+      src: preConStep1ImageA,
+      alt: 'Shopify export screen for post-conversion step 2.'
+    },
+    {
+      src: preConStep1ImageB,
+      alt: 'Additional Shopify export example for post-conversion step 2.'
+    }
+  ],
+  4: [
+    {
+      src: postConStep4ImageA,
+      alt: 'Shopify import screen for post-conversion step 4.'
+    },
+    {
+      src: postConStep4ImageB,
+      alt: 'Additional Shopify import example for post-conversion step 4.'
+    },
+    {
+      src: postConStep4ImageC,
+      alt: 'Final Shopify import example for post-conversion step 4.'
+    }
+  ]
+};
 
 const stages = [
   {
@@ -103,7 +148,7 @@ async function onProcess() {
   <div class="card spacious quantity-card tool-card step-card postcon-stepper-card">
     <div class="hero postcon-hero">
       <div class="hero-title">{{ currentContent.title }}</div>
-      <div class="hero-sub postcon-subtitle">{{ currentContent.description }}</div>
+      <div v-if="currentStage === 0" class="hero-sub postcon-subtitle">{{ currentContent.description }}</div>
     </div>
 
     <div class="stepper-progress" aria-label="Post-conversion progress">
@@ -154,6 +199,13 @@ async function onProcess() {
         <p class="postcon-copy">
           Export the Square inventory CSV so you have the most recent quantity values ready for the update.
         </p>
+        <div class="postcon-visual-card" aria-label="Step 1 visual guide">
+          <InfiniteCarousel
+            :slides="stepVisuals[1]"
+            label="Step 1 visual guide"
+            dot-label-prefix="Show step 1 image"
+          />
+        </div>
       </div>
 
       <div v-else-if="currentStage === 2" class="postcon-panel">
@@ -161,6 +213,13 @@ async function onProcess() {
         <p class="postcon-copy">
           Export the Shopify inventory CSV so the Square quantities can be matched back to the correct Shopify SKUs.
         </p>
+        <div class="postcon-visual-card" aria-label="Step 2 visual guide">
+          <InfiniteCarousel
+            :slides="stepVisuals[2]"
+            label="Step 2 visual guide"
+            dot-label-prefix="Show step 2 image"
+          />
+        </div>
       </div>
 
       <div v-else-if="currentStage === 3" class="postcon-panel">
@@ -213,7 +272,14 @@ async function onProcess() {
         <p class="postcon-copy">
           Import the newly created CSV into Shopify, then review the import summary and fix any issues before completing the update.
         </p>
-        <button class="btn secondary" type="button" @click="restartSteps">Start Over</button>
+        <div class="postcon-visual-card" aria-label="Step 4 visual guide">
+          <InfiniteCarousel
+            :slides="stepVisuals[4]"
+            label="Step 4 visual guide"
+            dot-label-prefix="Show step 4 image"
+          />
+        </div>
+        <button class="btn" type="button" @click="restartSteps">Start Over</button>
       </div>
     </div>
 
@@ -255,9 +321,10 @@ async function onProcess() {
 .stepper-progress {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 8px;
   max-width: 760px;
   margin: 0 auto;
+  margin-top: -10px;
   width: 100%;
 }
 
@@ -272,17 +339,20 @@ async function onProcess() {
 }
 
 .stepper-track-wrap {
+  --stepper-circle-size: 36px;
+  --stepper-track-height: 6px;
+  --stepper-track-offset: 4px;
   position: relative;
-  padding: 8px 4px 0;
+  padding: var(--stepper-track-offset) 4px 0;
 }
 
 .stepper-track,
 .stepper-track-fill {
   position: absolute;
-  top: 24px;
+  top: calc(var(--stepper-track-offset) + (var(--stepper-circle-size) - var(--stepper-track-height)) / 2);
   left: 18px;
   right: 18px;
-  height: 6px;
+  height: var(--stepper-track-height);
   border-radius: 999px;
 }
 
@@ -388,6 +458,117 @@ async function onProcess() {
   color: #0f1f46;
 }
 
+.postcon-visual-card {
+  width: min(100%, 420px);
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(11, 99, 214, 0.14);
+  box-shadow: 0 14px 32px rgba(14, 42, 99, 0.08);
+}
+
+.postcon-visual-frame-wrap {
+  position: relative;
+}
+
+.postcon-visual-frame {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  touch-action: pan-x pinch-zoom;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(240, 247, 255, 0.95), rgba(227, 238, 252, 0.9));
+  border: 1px solid rgba(18, 58, 138, 0.08);
+}
+
+.postcon-visual-frame::-webkit-scrollbar {
+  display: none;
+}
+
+.postcon-visual-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  object-fit: cover;
+  object-position: top center;
+  scroll-snap-align: center;
+}
+
+.postcon-visual-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.postcon-visual-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  border-radius: 999px;
+  background: rgba(10, 24, 55, 0.22);
+  backdrop-filter: blur(6px);
+  color: #123a8a;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+}
+
+.postcon-visual-nav:hover {
+  background: rgba(10, 24, 55, 0.32);
+}
+
+.postcon-visual-nav span {
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.postcon-visual-nav.is-left {
+  left: 10px;
+}
+
+.postcon-visual-nav.is-right {
+  right: 10px;
+}
+
+.postcon-visual-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.postcon-visual-dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(18, 58, 138, 0.18);
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.postcon-visual-dot.is-active {
+  background: #0b63d6;
+  transform: scale(1.15);
+}
+
 .postcon-convert-copy {
   max-width: 100%;
   margin-bottom: 6px;
@@ -429,6 +610,10 @@ async function onProcess() {
 }
 
 @media (max-width: 640px) {
+  .stepper-track-wrap {
+    --stepper-circle-size: 30px;
+  }
+
   .stepper-track,
   .stepper-track-fill {
     left: 12px;
@@ -459,6 +644,21 @@ async function onProcess() {
 
   .postcon-copy {
     font-size: 16px;
+  }
+
+  .postcon-visual-card {
+    padding: 12px;
+  }
+
+  .postcon-visual-frame {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .postcon-visual-nav {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
   }
 
   .postcon-actions {
