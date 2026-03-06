@@ -41,13 +41,15 @@ The production build is generated in `dist/`.
 
 This Vue app works on GitHub Pages.
 
-If deploying as a project site (`https://<user>.github.io/CSV-Converter/`), build with:
+For this repository's project site (`https://juanfnmb1lpt.github.io/CSV-Converter/`), the default production build already uses the correct base path:
 
 ```bash
-npm run build:gh-pages
+npm run build
 ```
 
 Then publish the `dist/` contents to your Pages branch.
+
+If you ever deploy the app under a different subpath, override the base path with the `VITE_BASE_PATH` environment variable before building.
 
 Routing uses hash mode (`/#/`) so direct page refresh works on GitHub Pages without server rewrites.
 
