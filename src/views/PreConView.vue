@@ -16,15 +16,15 @@ const stages = [
   },
   {
     title: 'Step 1',
-    description: 'Export the inventory CSV from Shopify so you have the source file for conversion.'
+    description: 'Export Shopify inventory CSV.'
   },
   {
     title: 'Step 2',
-    description: 'Upload the Shopify CSV and run the conversion to generate the Square-ready file.'
+    description: 'Upload it to the tool and download the Square-ready CSV.'
   },
   {
     title: 'Step 3',
-    description: 'Upload the generated Square CSV into Square and review any import warnings or errors before finishing.'
+    description: 'Import the downloaded CSV into Square and review any import warnings or errors before finishing.'
   }
 ];
 
@@ -68,7 +68,7 @@ function restartSteps() {
 
 async function onConvert() {
   if (!csvFile.value) {
-    window.alert('Upload a Shopify CSV first.');
+    window.alert('Upload a Shopify CSV or Excel file first.');
     return;
   }
 
@@ -139,7 +139,7 @@ async function onConvert() {
       <div v-else-if="currentStage === 1" class="precon-panel">
         <div class="precon-step-number">01</div>
         <p class="precon-copy">
-          In Shopify, export your inventory CSV so you have the latest catalog data ready for conversion.
+          Export Shopify inventory CSV.
         </p>
       </div>
 
@@ -147,7 +147,7 @@ async function onConvert() {
         <div class="precon-step-number">02</div>
         <div class="function-block precon-function-block">
           <p class="precon-copy precon-convert-copy">
-            Upload the Shopify export CSV, then click <strong>Download Square Ready CSV</strong>
+            Upload it to the tool here, then click <strong>Download Square Ready CSV</strong>.
           </p>
 
           <div class="function-callout">
@@ -164,7 +164,7 @@ async function onConvert() {
             <label class="file-control">
               <span class="file-btn">Choose File</span>
               <span class="file-name">{{ fileName }}</span>
-              <input type="file" accept=".csv" @change="onFileChange" />
+              <input type="file" accept=".csv,.xlsx,.xls" @change="onFileChange" />
             </label>
             <button class="btn" type="button" :disabled="isProcessing" @click="onConvert">
               {{ isProcessing ? 'Processing…' : 'Download Square Ready CSV' }}
@@ -176,7 +176,7 @@ async function onConvert() {
       <div v-else class="precon-panel">
         <div class="precon-step-number">03</div>
         <p class="precon-copy">
-          Import the generated CSV into Square, then review the import results and resolve any warnings before you move on.
+          Import the downloaded CSV into Square, then review the import results and resolve any warnings before you move on.
         </p>
         <button class="btn secondary" type="button" @click="restartSteps">Start Over</button>
       </div>

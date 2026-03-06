@@ -1,20 +1,9 @@
-import Papa from 'papaparse';
+import { parseUploadedTable } from './parseUploadedTable';
 
 function stripHtml(html) {
     const div = document.createElement('div');
     div.innerHTML = html || '';
     return div.textContent || div.innerText || '';
-}
-
-function parseFile(file) {
-    return new Promise((resolve, reject) => {
-        Papa.parse(file, {
-            header: true,
-            skipEmptyLines: true,
-            complete: (results) => resolve(results.data || []),
-            error: (error) => reject(error),
-        });
-    });
 }
 
 function findOptionValueByName(row, nameNeedle) {
@@ -90,7 +79,8 @@ function detectMensOrWomens(row, productRow) {
 }
 
 export async function convertShopifyToSquareCsv(file) {
-    const data = await parseFile(file);
+    const parsed = await parseUploadedTable(file);
+    const data = parsed.data || [];
 
     const squareHeaders = [
         'Reference Handle', 'Token', 'Item Name', 'Customer-facing Name', 'Variation Name',

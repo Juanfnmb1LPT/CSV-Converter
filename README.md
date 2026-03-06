@@ -7,8 +7,10 @@ All parsing and processing runs locally in the browser. No file data is uploaded
 ## Features
 
 - Shopify → Square conversion (`square_import.csv` output)
-- Update Shopify variant quantities from a Square inventory CSV
-- Client-side CSV parsing via PapaParse for both flows
+- Update Shopify variant quantities from a Square inventory file
+- Upload input supports CSV, XLSX, and XLS files
+- Excel uploads use the first sheet and first row as headers, then flatten to row-based data
+- Client-side parsing via PapaParse (CSV) and SheetJS (Excel)
 
 ## Run locally
 
