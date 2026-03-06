@@ -1,20 +1,10 @@
 import Papa from 'papaparse';
-
-function parseFile(file) {
-    return new Promise((resolve, reject) => {
-        Papa.parse(file, {
-            header: true,
-            skipEmptyLines: true,
-            complete: (results) => resolve(results),
-            error: (error) => reject(error),
-        });
-    });
-}
+import { parseUploadedTable } from './parseUploadedTable';
 
 export async function updateShopifyInventoryCsv(shopifyFile, squareFile) {
     const [shopifyResults, squareResults] = await Promise.all([
-        parseFile(shopifyFile),
-        parseFile(squareFile),
+        parseUploadedTable(shopifyFile),
+        parseUploadedTable(squareFile),
     ]);
 
     const shopHeaders = shopifyResults.meta?.fields || [];

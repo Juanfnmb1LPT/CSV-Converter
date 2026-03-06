@@ -399,6 +399,42 @@ input[type=file] {
   padding: 0 8px;
 }
 
+.tool-panel {
+  max-width: 840px;
+  padding: 16px 18px;
+  border: 1px solid rgba(11, 99, 214, 0.2);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 249, 255, 0.96));
+  box-shadow: 0 8px 24px rgba(14, 42, 99, 0.08);
+}
+
+.instruction-panel,
+.function-panel {
+  max-width: 840px;
+  margin: 12px auto 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(11, 99, 214, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.86);
+  color: #0f1f46;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.instruction-panel strong,
+.function-panel strong {
+  color: #082145;
+}
+
+.instruction-panel ol {
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+
+.instruction-panel li {
+  margin: 6px 0;
+}
+
 /* Stacked layout used on the Update Quantity page */
 .note-container>* {
   min-width: 0;
@@ -574,6 +610,11 @@ input[type=file] {
   margin-top: 10px
 }
 
+.card .instruction-panel,
+.card .function-panel {
+  text-align: left;
+}
+
 /* Optional increased spacing for pages that need more breathing room */
 .card.spacious .lead {
   margin-bottom: 8px
@@ -670,6 +711,13 @@ input[type=file] {
     align-items: stretch;
     gap: 10px;
     padding: 0
+  }
+
+  .tool-panel,
+  .instruction-panel,
+  .function-panel {
+    width: 100%;
+    padding: 12px;
   }
 
   .note-container .file-control,
