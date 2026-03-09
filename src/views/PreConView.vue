@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import InfiniteCarousel from '../components/InfiniteCarousel.vue';
-import { convertShopifyToSquareCsv } from '../lib/convertShopToSquare';
+import { buildShopifyToSquareRows, convertShopifyToSquareCsv } from '../lib/convertShopToSquare';
 import { downloadCsv } from '../lib/downloadCsv';
 import preConStep1ImageA from '../../assets/pre-con_step1.png';
 import preConStep1ImageB from '../../assets/pre-con_step1_pt2.png';
@@ -13,6 +13,10 @@ const fileName = ref('No file chosen');
 const isProcessing = ref(false);
 const currentStage = ref(0);
 const hasConverted = ref(false);
+const isPreviewLoading = ref(false);
+const previewHeaders = ref([]);
+const previewRows = ref([]);
+const hasPreview = ref(false);
 
 const stepVisuals = {
   1: [
@@ -48,7 +52,7 @@ const stages = [
   },
   {
     title: 'Step 2',
-    description: 'Upload it to the tool and download the Square-ready CSV.'
+    description: 'Upload it to the tool, preview the first five converted rows, and download the Square-ready CSV.'
   },
   {
     title: 'Step 3',
@@ -70,11 +74,18 @@ const progressPercentage = computed(() => {
 
 const currentContent = computed(() => stages[currentStage.value]);
 
+function resetPreview() {
+  hasPreview.value = false;
+  previewHeaders.value = [];
+  previewRows.value = [];
+}
+
 function onFileChange(event) {
   const file = event.target.files?.[0] || null;
   csvFile.value = file;
   fileName.value = file ? file.name : 'No file chosen';
   hasConverted.value = false;
+  resetPreview();
 }
 
 function goNext() {
@@ -92,6 +103,7 @@ function goBack() {
 function restartSteps() {
   hasConverted.value = false;
   currentStage.value = 0;
+  resetPreview();
 }
 
 async function onConvert() {
@@ -111,6 +123,29 @@ async function onConvert() {
   } finally {
     isProcessing.value = false;
   }
+}
+
+async function onPreview() {
+  if (!csvFile.value) {
+    window.alert('Upload a Shopify CSV or Excel file first.');
+    return;
+  }
+
+  isPreviewLoading.value = true;
+  try {
+    const rows = await buildShopifyToSquareRows(csvFile.value);
+    previewHeaders.value = rows[0] || [];
+    previewRows.value = rows.slice(1, 6);
+    hasPreview.value = true;
+  } catch (error) {
+    window.alert(`Error processing file: ${error?.message || error}`);
+  } finally {
+    isPreviewLoading.value = false;
+  }
+}
+
+function closePreview() {
+  resetPreview();
 }
 </script>
 
@@ -182,7 +217,7 @@ async function onConvert() {
         <div class="precon-step-number">02</div>
         <div class="function-block precon-function-block">
           <p class="precon-copy precon-convert-copy">
-            Upload it to the tool here, then click <strong>Download Square Ready CSV</strong>.
+            Upload it to the tool here, review the preview if needed, then click <strong>Download Square Ready CSV</strong>.
           </p>
 
           <div class="function-callout">
@@ -201,10 +236,16 @@ async function onConvert() {
               <span class="file-name">{{ fileName }}</span>
               <input type="file" accept=".csv,.xlsx,.xls" @change="onFileChange" />
             </label>
-            <button class="btn" type="button" :disabled="isProcessing" @click="onConvert">
-              {{ isProcessing ? 'Processing…' : 'Download Square Ready CSV' }}
-            </button>
+            <div class="action-row">
+              <button class="btn" type="button" :disabled="isProcessing" @click="onConvert">
+                {{ isProcessing ? 'Processing…' : 'Download Square Ready CSV' }}
+              </button>
+              <button class="btn secondary" type="button" :disabled="isPreviewLoading" @click="onPreview">
+                {{ isPreviewLoading ? 'Loading preview…' : 'Preview First 5 Rows' }}
+              </button>
+            </div>
           </div>
+
         </div>
       </div>
 
@@ -240,6 +281,37 @@ async function onConvert() {
       >
         Next Step
       </button>
+    </div>
+
+    <div v-if="hasPreview" class="preview-overlay" role="dialog" aria-modal="true" aria-labelledby="precon-preview-title" @click.self="closePreview">
+      <div class="preview-panel preview-dialog">
+        <div class="preview-header">
+          <strong id="precon-preview-title">Square Ready CSV Preview</strong>
+          <span>Showing the first {{ previewRows.length }} converted rows.</span>
+          <button class="btn secondary preview-close-btn" type="button" @click="closePreview">
+            Close Preview
+          </button>
+        </div>
+
+        <div v-if="previewRows.length" class="preview-table-wrap">
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th v-for="header in previewHeaders" :key="header">{{ header }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, rowIndex) in previewRows" :key="rowIndex">
+                <td v-for="(cell, cellIndex) in row" :key="`${rowIndex}-${cellIndex}`">{{ cell || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div v-else class="preview-empty">
+          No converted product rows were found in this file.
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -543,6 +615,26 @@ async function onConvert() {
 
 .precon-upload-row {
   margin-top: 16px;
+  width: 100%;
+}
+
+.precon-upload-row .file-control,
+.precon-upload-row .action-row {
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.precon-upload-row .action-row {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.precon-upload-row .action-row .btn {
+  flex: 0 0 auto;
+  max-width: none;
+  width: 100%;
 }
 
 .precon-actions {
@@ -601,6 +693,38 @@ async function onConvert() {
     width: 32px;
     height: 32px;
     font-size: 20px;
+  }
+
+  .precon-upload-row {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+  }
+
+  .precon-upload-row > * {
+    margin: 0;
+    min-width: 0;
+    flex: 0 0 auto;
+  }
+
+  .precon-upload-row .file-control {
+    min-width: 0;
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 0;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .precon-upload-row .file-name {
+    max-width: calc(100% - 110px);
+  }
+
+  .precon-upload-row .action-row {
+    display: grid;
+    max-width: 320px;
+    margin-top: 0;
+    gap: 6px;
   }
 
   .precon-actions {

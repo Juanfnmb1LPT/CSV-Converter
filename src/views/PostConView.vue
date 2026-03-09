@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import InfiniteCarousel from '../components/InfiniteCarousel.vue';
-import { updateShopifyInventoryCsv } from '../lib/updateInventoryFromSquare';
+import { buildUpdatedShopifyInventoryData, updateShopifyInventoryCsv } from '../lib/updateInventoryFromSquare';
 import { downloadCsv } from '../lib/downloadCsv';
 import postConStep1ImageA from '../../assets/post-con-step1.png';
 import postConStep1ImageB from '../../assets/post-con-step1-pt2.png';
@@ -18,6 +18,10 @@ const squareName = ref('No file chosen');
 const isProcessing = ref(false);
 const currentStage = ref(0);
 const hasProcessed = ref(false);
+const isPreviewLoading = ref(false);
+const previewHeaders = ref([]);
+const previewRows = ref([]);
+const hasPreview = ref(false);
 
 const stepVisuals = {
   1: [
@@ -71,7 +75,7 @@ const stages = [
   },
   {
     title: 'Step 3',
-    description: 'Upload both CSV files and run the quantity update to create the new Shopify import file.'
+    description: 'Upload both CSV files, preview the first five updated rows, and create the new Shopify import file.'
   },
   {
     title: 'Step 4',
@@ -92,11 +96,18 @@ const progressPercentage = computed(() => {
 
 const currentContent = computed(() => stages[currentStage.value]);
 
+function resetPreview() {
+  hasPreview.value = false;
+  previewHeaders.value = [];
+  previewRows.value = [];
+}
+
 function onShopifyChange(event) {
   const file = event.target.files?.[0] || null;
   shopifyFile.value = file;
   shopifyName.value = file ? file.name : 'No file chosen';
   hasProcessed.value = false;
+  resetPreview();
 }
 
 function onSquareChange(event) {
@@ -104,6 +115,7 @@ function onSquareChange(event) {
   squareFile.value = file;
   squareName.value = file ? file.name : 'No file chosen';
   hasProcessed.value = false;
+  resetPreview();
 }
 
 function goNext() {
@@ -121,6 +133,7 @@ function goBack() {
 function restartSteps() {
   hasProcessed.value = false;
   currentStage.value = 0;
+  resetPreview();
 }
 
 async function onProcess() {
@@ -141,6 +154,29 @@ async function onProcess() {
   } finally {
     isProcessing.value = false;
   }
+}
+
+async function onPreview() {
+  if (!shopifyFile.value || !squareFile.value) {
+    window.alert('Please select both Shopify and Square CSV files.');
+    return;
+  }
+
+  isPreviewLoading.value = true;
+  try {
+    const { headers, rows } = await buildUpdatedShopifyInventoryData(shopifyFile.value, squareFile.value);
+    previewHeaders.value = headers;
+    previewRows.value = rows.slice(0, 5).map((row) => headers.map((header) => row[header] ?? ''));
+    hasPreview.value = true;
+  } catch (error) {
+    window.alert(`Error processing files: ${error?.message || error}`);
+  } finally {
+    isPreviewLoading.value = false;
+  }
+}
+
+function closePreview() {
+  resetPreview();
 }
 </script>
 
@@ -226,7 +262,7 @@ async function onProcess() {
         <div class="postcon-step-number">03</div>
         <div class="function-block postcon-function-block">
           <p class="postcon-copy postcon-convert-copy">
-            Upload both CSV files, then click <strong>Download Updated Shopify CSV</strong>.
+            Upload both CSV files, review the preview if needed, then click <strong>Download Updated Shopify CSV</strong>.
           </p>
 
           <div class="function-callout">
@@ -258,12 +294,16 @@ async function onProcess() {
               </label>
             </div>
 
-            <div>
+            <div class="action-row action-row-quantity">
               <button class="btn" type="button" :disabled="isProcessing" @click="onProcess">
                 {{ isProcessing ? 'Processing…' : 'Download Updated Shopify CSV' }}
               </button>
+              <button class="btn secondary" type="button" :disabled="isPreviewLoading" @click="onPreview">
+                {{ isPreviewLoading ? 'Loading preview…' : 'Preview First 5 Rows' }}
+              </button>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -299,6 +339,37 @@ async function onProcess() {
       >
         Next Step
       </button>
+    </div>
+
+    <div v-if="hasPreview" class="preview-overlay" role="dialog" aria-modal="true" aria-labelledby="postcon-preview-title" @click.self="closePreview">
+      <div class="preview-panel preview-dialog">
+        <div class="preview-header">
+          <strong id="postcon-preview-title">Updated Shopify CSV Preview</strong>
+          <span>Showing the first {{ previewRows.length }} updated rows.</span>
+          <button class="btn secondary preview-close-btn" type="button" @click="closePreview">
+            Close Preview
+          </button>
+        </div>
+
+        <div v-if="previewRows.length" class="preview-table-wrap">
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th v-for="header in previewHeaders" :key="header">{{ header }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, rowIndex) in previewRows" :key="rowIndex">
+                <td v-for="(cell, cellIndex) in row" :key="`${rowIndex}-${cellIndex}`">{{ cell || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div v-else class="preview-empty">
+          No updated Shopify rows were found in these files.
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -603,6 +674,23 @@ async function onProcess() {
   margin-top: 16px;
 }
 
+.postcon-upload-row .quantity-row {
+  width: 100%;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 0;
+}
+
+.postcon-upload-row .file-control {
+  flex: 1 1 300px;
+  min-width: 0;
+}
+
+.postcon-upload-row .file-name {
+  max-width: calc(100% - 110px);
+}
+
 .postcon-actions {
   display: flex;
   justify-content: center;
@@ -663,6 +751,14 @@ async function onProcess() {
 
   .postcon-actions {
     flex-direction: column;
+  }
+
+  .postcon-upload-row .quantity-row {
+    max-width: 320px;
+  }
+
+  .postcon-upload-row .file-control {
+    width: 100%;
   }
 }
 </style>

@@ -1,5 +1,9 @@
 import { parseUploadedTable } from './parseUploadedTable';
 
+function escapeCsvValue(value) {
+    return `"${(value || '').toString().replace(/"/g, '""')}"`;
+}
+
 function stripHtml(html) {
     const div = document.createElement('div');
     div.innerHTML = html || '';
@@ -78,7 +82,7 @@ function detectMensOrWomens(row, productRow) {
     return hasWomenSignal ? 'Womens' : 'Mens';
 }
 
-export async function convertShopifyToSquareCsv(file) {
+export async function buildShopifyToSquareRows(file) {
     const parsed = await parseUploadedTable(file);
     const data = parsed.data || [];
 
@@ -149,7 +153,16 @@ export async function convertShopifyToSquareCsv(file) {
         });
     });
 
-    return output
-        .map((row) => row.map((value) => `"${(value || '').toString().replace(/"/g, '""')}"`).join(','))
+    return output;
+}
+
+export function rowsToCsv(rows) {
+    return rows
+        .map((row) => row.map((value) => escapeCsvValue(value)).join(','))
         .join('\r\n');
+}
+
+export async function convertShopifyToSquareCsv(file) {
+    const rows = await buildShopifyToSquareRows(file);
+    return rowsToCsv(rows);
 }

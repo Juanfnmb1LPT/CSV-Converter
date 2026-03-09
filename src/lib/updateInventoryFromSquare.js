@@ -1,7 +1,7 @@
 import Papa from 'papaparse';
 import { parseUploadedTable } from './parseUploadedTable';
 
-export async function updateShopifyInventoryCsv(shopifyFile, squareFile) {
+export async function buildUpdatedShopifyInventoryData(shopifyFile, squareFile) {
     const [shopifyResults, squareResults] = await Promise.all([
         parseUploadedTable(shopifyFile),
         parseUploadedTable(squareFile),
@@ -46,5 +46,13 @@ export async function updateShopifyInventoryCsv(shopifyFile, squareFile) {
         return nextRow;
     });
 
-    return Papa.unparse({ fields: shopHeaders, data: updatedRows });
+    return {
+        headers: shopHeaders,
+        rows: updatedRows,
+    };
+}
+
+export async function updateShopifyInventoryCsv(shopifyFile, squareFile) {
+    const { headers, rows } = await buildUpdatedShopifyInventoryData(shopifyFile, squareFile);
+    return Papa.unparse({ fields: headers, data: rows });
 }

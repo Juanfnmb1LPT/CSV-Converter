@@ -435,6 +435,136 @@ input[type=file] {
   margin: 6px 0;
 }
 
+.preview-panel {
+  max-width: 100%;
+  margin: 14px auto 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(11, 99, 214, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f1f46;
+  box-shadow: 0 8px 24px rgba(14, 42, 99, 0.06);
+}
+
+.preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(7, 19, 49, 0.48);
+  backdrop-filter: blur(10px);
+}
+
+.preview-dialog {
+  width: min(1180px, 100%);
+  max-height: calc(100vh - 48px);
+  margin: 0;
+  padding: 20px 22px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(7, 19, 49, 0.24);
+}
+
+.preview-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.preview-header span {
+  color: #0b3b82;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(14, 165, 255, 0.12);
+  border: 1px solid rgba(11, 99, 214, 0.16);
+}
+
+.preview-close-btn {
+  margin-left: auto;
+  padding: 8px 12px;
+  min-height: 36px;
+  border-radius: 10px;
+  font-size: 13px;
+  flex: 0 0 auto;
+}
+
+.preview-table-wrap {
+  overflow-x: auto;
+  max-height: calc(100vh - 210px);
+  border-radius: 10px;
+  border: 1px solid rgba(8, 33, 69, 0.08);
+}
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 980px;
+  background: #fff;
+}
+
+.preview-table th,
+.preview-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(8, 33, 69, 0.08);
+  text-align: left;
+  vertical-align: top;
+  font-size: 13px;
+}
+
+.preview-table th {
+  position: sticky;
+  top: 0;
+  background: #eef6ff;
+  color: #082145;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.preview-table td {
+  color: #15315b;
+}
+
+.preview-table tbody tr:nth-child(even) {
+  background: rgba(238, 246, 255, 0.4);
+}
+
+.preview-empty {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(238, 246, 255, 0.7);
+  color: var(--muted);
+  text-align: center;
+}
+
+.action-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 652px;
+  margin: 0 auto;
+}
+
+.action-row .btn {
+  flex: 0 1 320px;
+  max-width: 320px;
+  width: 100%;
+  min-width: 0;
+}
+
+.action-row-quantity {
+  margin-top: 4px;
+}
+
 /* Stacked layout used on the Update Quantity page */
 .note-container>* {
   min-width: 0;
@@ -546,6 +676,7 @@ input[type=file] {
   min-width: 260px;
   width: 300px;
   max-width: 300px;
+  overflow: hidden;
   cursor: pointer;
   transition: transform .14s ease, box-shadow .14s ease;
 }
@@ -556,10 +687,13 @@ input[type=file] {
   padding: 6px 10px;
   border-radius: 8px;
   font-weight: 700;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   height: 26px;
+  line-height: 1;
+  white-space: nowrap;
   font-size: 13px;
 }
 
@@ -572,12 +706,13 @@ input[type=file] {
 }
 
 .file-control .file-name {
+  flex: 1 1 auto;
+  min-width: 0;
   color: var(--muted);
   font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 220px;
 }
 
 .file-control input[type=file] {
@@ -720,14 +855,55 @@ input[type=file] {
 
   .tool-panel,
   .instruction-panel,
-  .function-panel {
+  .function-panel,
+  .preview-panel {
     width: 100%;
+    padding: 12px;
+  }
+
+  .preview-overlay {
     padding: 12px;
   }
 
   .note-container .file-control,
   .note-container .btn {
     flex: 1 1 100%
+  }
+
+  .action-row {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    max-width: 320px;
+  }
+
+  .action-row .btn {
+    max-width: none;
+    width: 100%;
+  }
+
+  .preview-header {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .preview-close-btn {
+    margin-left: 0;
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+  }
+
+  .preview-panel {
+    overflow: hidden;
+  }
+
+  .preview-dialog {
+    max-height: calc(100vh - 24px);
+  }
+
+  .preview-table-wrap {
+    max-height: calc(100vh - 180px);
   }
 
   /* Ensure the Update Quantity layout also stacks nicely on small screens */
@@ -765,7 +941,7 @@ input[type=file] {
   }
 
   .file-control .file-btn {
-    height: auto;
+    height: 26px;
     padding: 6px 10px
   }
 
@@ -788,6 +964,12 @@ input[type=file] {
   .home-options .btn {
     width: 100%;
     max-width: 320px;
+  }
+
+  .preview-table th,
+  .preview-table td {
+    padding: 8px 10px;
+    font-size: 12px;
   }
 }
 
