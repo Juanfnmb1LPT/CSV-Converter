@@ -842,6 +842,7 @@ input[type=file] {
   .app-main {
     padding: 18px;
     align-items: flex-start;
+    overflow-y: auto;
   }
 
   .card,
@@ -913,6 +914,7 @@ input[type=file] {
 
   .app-main {
     padding: 16px;
+    overflow-y: auto;
   }
 
   .card {

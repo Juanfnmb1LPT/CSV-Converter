@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import InfiniteCarousel from '../components/InfiniteCarousel.vue';
 import { buildUpdatedShopifyInventoryData, updateShopifyInventoryCsv } from '../lib/updateInventoryFromSquare';
 import { downloadCsv } from '../lib/downloadCsv';
@@ -22,6 +23,7 @@ const isPreviewLoading = ref(false);
 const previewHeaders = ref([]);
 const previewRows = ref([]);
 const hasPreview = ref(false);
+const router = useRouter();
 
 const stepVisuals = {
   1: [
@@ -130,10 +132,8 @@ function goBack() {
   }
 }
 
-function restartSteps() {
-  hasProcessed.value = false;
-  currentStage.value = 0;
-  resetPreview();
+function goHome() {
+  router.push('/');
 }
 
 async function onProcess() {
@@ -323,7 +323,7 @@ function closePreview() {
             dot-label-prefix="Show step 4 image"
           />
         </div>
-        <button class="btn" type="button" @click="restartSteps">Start Over</button>
+        <button class="btn" type="button" @click="goHome">Go to Home</button>
       </div>
     </div>
 
@@ -768,6 +768,39 @@ function closePreview() {
   }
 }
 
+@media (max-width: 1200px) {
+  .postcon-function-block {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .postcon-upload-grid {
+    width: 100%;
+    max-width: 420px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    row-gap: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
+    box-sizing: border-box;
+  }
+
+  .postcon-upload-files,
+  .postcon-upload-actions {
+    width: 100%;
+    grid-column: auto;
+  }
+
+  .postcon-upload-grid .file-control,
+  .postcon-upload-grid .action-row,
+  .postcon-upload-grid .action-row .btn {
+    width: 100%;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 @media (max-width: 640px) {
   .stepper-track-wrap {
     --stepper-circle-size: 30px;
@@ -823,6 +856,14 @@ function closePreview() {
   .postcon-actions {
     flex-direction: column;
     align-items: center;
+  }
+
+  .postcon-actions .btn.secondary {
+    order: 2;
+  }
+
+  .postcon-actions .btn:not(.secondary) {
+    order: 1;
   }
 
   .postcon-actions .btn {

@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import InfiniteCarousel from '../components/InfiniteCarousel.vue';
 import { buildShopifyToSquareRows, convertShopifyToSquareCsv } from '../lib/convertShopToSquare';
 import { downloadCsv } from '../lib/downloadCsv';
@@ -17,6 +18,7 @@ const isPreviewLoading = ref(false);
 const previewHeaders = ref([]);
 const previewRows = ref([]);
 const hasPreview = ref(false);
+const router = useRouter();
 
 const stepVisuals = {
   1: [
@@ -100,10 +102,8 @@ function goBack() {
   }
 }
 
-function restartSteps() {
-  hasConverted.value = false;
-  currentStage.value = 0;
-  resetPreview();
+function goHome() {
+  router.push('/');
 }
 
 async function onConvert() {
@@ -199,7 +199,7 @@ function closePreview() {
         <button class="btn" type="button" @click="goNext">Start Steps</button>
       </div>
 
-      <div v-else-if="currentStage === 1" class="precon-panel">
+      <div v-else-if="currentStage === 1" class="precon-panel precon-panel-step1">
         <div class="precon-step-number">01</div>
         <p class="precon-copy">
           Export Shopify inventory CSV.
@@ -261,7 +261,7 @@ function closePreview() {
             dot-label-prefix="Show step 3 image"
           />
         </div>
-        <button class="btn" type="button" @click="restartSteps">Start Over</button>
+        <button class="btn" type="button" @click="goHome">Go to Home</button>
       </div>
     </div>
 
@@ -684,6 +684,12 @@ function closePreview() {
     padding: 12px;
   }
 
+  .precon-panel-step1 {
+    gap: 12px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
   .precon-visual-frame {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -730,6 +736,14 @@ function closePreview() {
   .precon-actions {
     flex-direction: column;
     align-items: center;
+  }
+
+  .precon-actions .btn.secondary {
+    order: 2;
+  }
+
+  .precon-actions .btn:not(.secondary) {
+    order: 1;
   }
 
   .precon-actions .btn {
