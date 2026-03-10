@@ -729,6 +729,11 @@ function closePreview() {
 
   .precon-actions {
     flex-direction: column;
+    align-items: center;
+  }
+
+  .precon-actions .btn {
+    width: min(100%, 220px);
   }
 }
 </style>

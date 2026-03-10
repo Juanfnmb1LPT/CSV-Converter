@@ -597,6 +597,7 @@ input[type=file] {
   align-items: center;
   gap: 10px;
   width: 100%;
+  min-width: 0;
 }
 
 .quantity-row>label:first-child {
@@ -771,28 +772,121 @@ input[type=file] {
   margin-top: 8px
 }
 
+@media (max-width:1024px) {
+  .dashboard {
+    width: 236px;
+    min-width: 236px;
+    padding: 18px 14px;
+  }
+
+  .app-main {
+    padding: 20px;
+  }
+
+  .card,
+  .quantity-card {
+    padding: 30px 28px 20px;
+  }
+
+  .hero-title {
+    font-size: 30px;
+  }
+}
+
 /* Tablet / medium screens: stack label above input but keep compact widths */
 @media (max-width:900px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .dashboard {
+    width: 100%;
+    min-width: 0;
+    border-right: 0;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.08);
+    padding: 14px 16px;
+  }
+
+  .dashboard-header {
+    justify-content: center;
+  }
+
+  .dashboard-brand img {
+    width: 72px;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    left: 0;
+    right: auto;
+  }
+
+  .dashboard-nav {
+    display: none;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+
+  .dashboard-nav.is-open {
+    display: flex;
+  }
+
+  .dash-link {
+    flex: 0 0 auto;
+    width: 100%;
+    text-align: center;
+  }
+
+  .app-main {
+    padding: 18px;
+    align-items: flex-start;
+  }
+
+  .card,
+  .quantity-card {
+    max-width: 100%;
+    padding: 28px 22px 20px;
+  }
+
+  .tool-panel,
+  .instruction-panel,
+  .function-panel {
+    max-width: 100%;
+  }
+
   .note-container.note-quantity>* {
     flex-direction: column;
     align-items: center;
     gap: 4px;
   }
 
+  .quantity-row {
+    gap: 8px;
+  }
+
   .quantity-row>label:first-child {
     min-width: 0;
     text-align: center;
+  }
+
+  .quantity-row .file-control,
+  .note-container.note-quantity .btn,
+  .action-row {
+    width: min(100%, 420px);
+    max-width: 420px;
+  }
+
+  .action-row .btn {
+    flex-basis: calc(50% - 6px);
+    max-width: none;
   }
 }
 
 @media (max-width:640px) {
   .app-layout {
     flex-direction: column;
-  }
-
-  .nav-toggle {
-    left: 0;
-    right: auto;
   }
 
   .dashboard {
@@ -812,17 +906,9 @@ input[type=file] {
   }
 
   .dashboard-nav {
-    display: none;
     flex-direction: column;
+    flex-wrap: nowrap;
     margin-top: 8px;
-  }
-
-  .dashboard-nav.is-open {
-    display: flex;
-  }
-
-  .nav-toggle {
-    display: inline-flex;
   }
 
   .app-main {
@@ -831,6 +917,10 @@ input[type=file] {
 
   .card {
     padding: 20px
+  }
+
+  .quantity-card {
+    padding: 20px;
   }
 
   .controls {
@@ -868,6 +958,13 @@ input[type=file] {
   .note-container .file-control,
   .note-container .btn {
     flex: 1 1 100%
+  }
+
+  .quantity-row .file-control,
+  .note-container.note-quantity .btn,
+  .action-row {
+    width: 100%;
+    max-width: none;
   }
 
   .action-row {
@@ -926,8 +1023,6 @@ input[type=file] {
   }
 
   .file-control {
-    max-width: 320px;
-    width: 100%;
     padding: 8px;
     justify-content: flex-start;
     box-sizing: border-box;

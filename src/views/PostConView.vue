@@ -275,32 +275,36 @@ function closePreview() {
             {{ hasProcessed ? 'Updated Shopify CSV created. Continue with the final import step.' : 'Generate the updated Shopify CSV to complete this step.' }}
           </p>
 
-          <div class="note-container note-quantity postcon-upload-row">
-            <div class="quantity-row">
-              <label>Shopify CSV (old quantities):</label>
-              <label class="file-control">
-                <span class="file-btn">Choose File</span>
-                <span class="file-name">{{ shopifyName }}</span>
-                <input type="file" accept=".csv" @change="onShopifyChange" />
-              </label>
+          <div class="note-container note-quantity postcon-upload-row postcon-upload-grid">
+            <div class="postcon-upload-column postcon-upload-files">
+              <div class="quantity-row">
+                <label>Shopify CSV (old quantities):</label>
+                <label class="file-control">
+                  <span class="file-btn">Choose File</span>
+                  <span class="file-name">{{ shopifyName }}</span>
+                  <input type="file" accept=".csv" @change="onShopifyChange" />
+                </label>
+              </div>
+
+              <div class="quantity-row">
+                <label>Square CSV (new quantities):</label>
+                <label class="file-control">
+                  <span class="file-btn">Choose File</span>
+                  <span class="file-name">{{ squareName }}</span>
+                  <input type="file" accept=".csv" @change="onSquareChange" />
+                </label>
+              </div>
             </div>
 
-            <div class="quantity-row">
-              <label>Square CSV (new quantities):</label>
-              <label class="file-control">
-                <span class="file-btn">Choose File</span>
-                <span class="file-name">{{ squareName }}</span>
-                <input type="file" accept=".csv" @change="onSquareChange" />
-              </label>
-            </div>
-
-            <div class="action-row action-row-quantity">
-              <button class="btn" type="button" :disabled="isProcessing" @click="onProcess">
-                {{ isProcessing ? 'Processing…' : 'Download Updated Shopify CSV' }}
-              </button>
-              <button class="btn secondary" type="button" :disabled="isPreviewLoading" @click="onPreview">
-                {{ isPreviewLoading ? 'Loading preview…' : 'Preview First 5 Rows' }}
-              </button>
+            <div class="postcon-upload-column postcon-upload-actions">
+              <div class="action-row action-row-quantity">
+                <button class="btn" type="button" :disabled="isProcessing" @click="onProcess">
+                  {{ isProcessing ? 'Processing…' : 'Download Updated Shopify CSV' }}
+                </button>
+                <button class="btn secondary" type="button" :disabled="isPreviewLoading" @click="onPreview">
+                  {{ isPreviewLoading ? 'Loading preview…' : 'Preview First 5 Rows' }}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -670,24 +674,74 @@ function closePreview() {
   text-align: left;
 }
 
-.postcon-upload-row {
+.postcon-upload-grid {
+  --postcon-control-width: 320px;
+  --postcon-middle-gap: clamp(24px, 4vw, 44px);
   margin-top: 16px;
+  width: min(100%, calc((2 * var(--postcon-control-width)) + var(--postcon-middle-gap)));
+  display: grid;
+  grid-template-columns: var(--postcon-control-width) var(--postcon-middle-gap) var(--postcon-control-width);
+  align-items: center;
+  justify-content: center;
+  row-gap: 14px;
 }
 
-.postcon-upload-row .quantity-row {
+.postcon-upload-column {
+  min-width: 0;
+}
+
+.postcon-upload-files {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.postcon-upload-actions {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.postcon-upload-grid .quantity-row {
+  display: grid;
+  justify-items: stretch;
+  gap: 6px;
   width: 100%;
-  max-width: 540px;
-  margin-left: auto;
-  margin-right: auto;
-  min-width: 0;
+  max-width: none;
+  margin: 0;
 }
 
-.postcon-upload-row .file-control {
-  flex: 1 1 300px;
+.postcon-upload-grid .quantity-row > label:first-child {
   min-width: 0;
+  width: 100%;
+  text-align: left;
 }
 
-.postcon-upload-row .file-name {
+.postcon-upload-grid .file-control,
+.postcon-upload-grid .action-row {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+}
+
+.postcon-upload-grid .action-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.postcon-upload-grid .action-row .btn {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: none;
+}
+
+.postcon-upload-grid .file-name {
   max-width: calc(100% - 110px);
 }
 
@@ -695,6 +749,23 @@ function closePreview() {
   display: flex;
   justify-content: center;
   gap: 14px;
+}
+
+@media (max-width: 760px) {
+  .postcon-upload-grid {
+    --postcon-control-width: min(320px, 100%);
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .postcon-upload-grid .quantity-row > label:first-child {
+    text-align: center;
+  }
+
+  .postcon-upload-files,
+  .postcon-upload-actions {
+    grid-column: auto;
+  }
 }
 
 @media (max-width: 640px) {
@@ -751,14 +822,25 @@ function closePreview() {
 
   .postcon-actions {
     flex-direction: column;
+    align-items: center;
   }
 
-  .postcon-upload-row .quantity-row {
-    max-width: 320px;
+  .postcon-actions .btn {
+    width: min(100%, 220px);
   }
 
-  .postcon-upload-row .file-control {
-    width: 100%;
+  .postcon-upload-grid {
+    gap: 4px;
+  }
+
+  .postcon-upload-grid .file-control {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .postcon-upload-grid .action-row {
+    display: grid;
+    margin-top: 0;
   }
 }
 </style>
