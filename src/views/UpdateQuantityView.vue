@@ -196,6 +196,8 @@ function closePreview() {
   flex-direction: column;
   align-items: stretch;
   gap: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .quantity-upload-actions {
@@ -249,6 +251,8 @@ function closePreview() {
   align-items: stretch;
   gap: 10px;
   margin: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .quantity-upload-action-btn {

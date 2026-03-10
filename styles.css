@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
 :root {
   --bg: #eef6ff;
@@ -8,16 +8,15 @@
   --accent-2: #2563eb;
   --muted: #6b7280;
   --shadow: 0 18px 50px rgba(14, 42, 99, 0.12);
-  --glass: rgba(255, 255, 255, 0.6);
 }
 
 * {
-  box-sizing: border-box
+  box-sizing: border-box;
 }
 
 html,
 body {
-  height: 100%
+  height: 100%;
 }
 
 body {
@@ -41,13 +40,14 @@ body {
 .dashboard {
   width: 280px;
   min-width: 280px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(250, 252, 255, 0.95));
-  border-right: 1px solid rgba(37, 99, 235, 0.08);
-  box-shadow: 0 10px 30px rgba(14, 42, 99, 0.08);
   padding: 20px 16px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.99), rgba(148, 186, 248, 0.97));
+  border-right: 1px solid rgba(10, 44, 99, 0.12);
+  box-shadow: 0 10px 30px rgba(14, 42, 99, 0.08);
+  backdrop-filter: blur(6px);
 }
 
 .dashboard-header {
@@ -88,14 +88,14 @@ body {
 .nav-toggle {
   display: none;
   position: absolute;
-  right: 0;
   top: 50%;
+  right: 0;
   transform: translateY(-50%);
   width: 40px;
   height: 32px;
   padding: 4px 6px;
-  border-radius: 999px;
   border: 0;
+  border-radius: 999px;
   background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 0 0 1px rgba(8, 33, 69, 0.06);
   cursor: pointer;
@@ -106,33 +106,34 @@ body {
 }
 
 .nav-toggle-bar {
+  display: block;
   width: 20px;
   height: 2px;
+  margin: 3px 0;
   border-radius: 999px;
   background: #082145;
-  display: block;
-  margin: 3px 0;
 }
 
 .dash-link {
-  text-decoration: none;
-  color: #0f1f46;
+  padding: 12px 14px;
+  font-size: 15px;
   font-weight: 600;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(37, 99, 235, 0.08);
+  color: #082145;
+  text-decoration: none;
+  border-radius: 12px;
+  border: 1px solid rgba(8, 33, 69, 0.06);
   background: rgba(255, 255, 255, 0.75);
-  transition: background .14s ease, transform .14s ease;
+  transition: background 0.14s ease, transform 0.14s ease;
 }
 
 .dash-link:hover {
-  background: rgba(14, 165, 255, 0.08);
+  background: linear-gradient(90deg, rgba(8, 33, 69, 0.06), rgba(10, 86, 160, 0.05));
   transform: translateY(-1px);
 }
 
 .dash-link.router-link-active {
   color: #fff;
-  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  background: linear-gradient(90deg, #123a8a, #0b63d6);
   border-color: transparent;
 }
 
@@ -145,22 +146,14 @@ body {
   justify-content: center;
 }
 
-.site {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 72px 20px;
-}
-
 .card {
   width: 100%;
   max-width: 980px;
+  padding: 36px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(250, 252, 255, 0.95));
+  border: 1px solid rgba(37, 99, 235, 0.06);
   border-radius: 14px;
   box-shadow: var(--shadow);
-  padding: 36px;
-  border: 1px solid rgba(37, 99, 235, 0.06);
   backdrop-filter: blur(6px);
 }
 
@@ -168,238 +161,80 @@ body {
   max-width: 1100px;
 }
 
-.brand {
+.step-card {
+  max-width: 900px;
+}
+
+.quantity-card {
+  padding: 36px 36px 20px;
+}
+
+.hero {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 8px
+  justify-content: center;
+  padding: 16px 12px;
+  text-align: center;
 }
 
-.logo {
-  /* show only the PNG centered — remove ring/background/shadow */
-  width: auto;
-  height: auto;
-  display: block;
-  margin: 0 auto 12px;
-  background: transparent;
-  border: none;
-  box-shadow: none;
+.hero-title {
+  margin: 8px 0;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.02;
 }
 
-.logo img {
-  display: block;
-  margin: 0 auto;
-  width: min(28vw, 120px);
-  height: auto;
-  object-fit: contain;
-  object-position: center;
-}
-
-
-.title {
-  font-size: 20px;
-  font-weight: 700
-}
-
-.lead {
+.hero-sub {
+  max-width: 760px;
+  margin-bottom: 4px;
   color: var(--muted);
-  margin-top: 4px;
-  margin-bottom: 18px
 }
 
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center
-}
-
-input[type=file] {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #e6edf3;
-  background: #fff
-}
-
-/* .btn applied to both <a> and <button> elements */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
   background: linear-gradient(90deg, var(--accent-2), var(--accent));
   color: #fff;
-  padding: 12px 20px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
   font-weight: 700;
   text-decoration: none;
+  cursor: pointer;
   box-shadow: 0 8px 24px rgba(14, 45, 110, 0.12);
-  transition: transform .14s ease, box-shadow .14s ease
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
 
 .btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(14, 45, 110, 0.14)
+  box-shadow: 0 18px 40px rgba(14, 45, 110, 0.14);
 }
 
 .btn.secondary {
   background: transparent;
   color: var(--accent-2);
   border: 2px solid rgba(37, 99, 235, 0.12);
-  backdrop-filter: blur(4px)
+  backdrop-filter: blur(4px);
 }
 
 .btn:disabled {
-  opacity: .7;
+  opacity: 0.7;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none
+  box-shadow: none;
 }
 
-/* Hero / index-specific styles */
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 16px 12px
-}
-
-.hero-title {
-  font-size: 34px;
-  font-weight: 800;
-  margin: 8px 0;
-  line-height: 1.02
-}
-
-.hero-sub {
-  color: var(--muted);
-  max-width: 760px;
-  margin-bottom: 4px
-}
-
-/* Home page: slightly larger, more prominent sub text */
-.home-sub-large {
-  font-size: 20px;
-  color: #0b2545;
-  margin-top: 12px;
-  line-height: 1.45;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  font-weight: 300;
-}
-
-/* Slightly richer blue gradient for the sidebar to feel professional */
-.dashboard {
-  background: linear-gradient(180deg, rgba(239, 246, 255, 0.99), rgba(148, 186, 248, 0.97));
-  border-right: 1px solid rgba(10, 44, 99, 0.12);
-  backdrop-filter: blur(6px);
-}
-
-/* Make nav links a bit more prominent */
-.dash-link {
-  padding: 12px 14px;
-  font-size: 15px;
-  border-radius: 12px;
-  color: #082145;
-  border: 1px solid rgba(8, 33, 69, 0.06);
-}
-
-.dash-link:hover {
-  background: linear-gradient(90deg, rgba(8, 33, 69, 0.06), rgba(10, 86, 160, 0.05));
-}
-
-/* Active nav: richer, darker blue gradient */
-.dash-link.router-link-active {
-  color: #fff;
-  background: linear-gradient(90deg, #123a8a, #0b63d6);
-  border-color: transparent;
-}
-
-/* Home card tweaks */
-.home-card {
-  text-align: center;
-  padding: 48px;
-}
-
-.home-options {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 12px;
-  flex-wrap: wrap;
-}
-
-.step-card {
-  max-width: 900px;
-}
-
-.step-list {
+.note {
   margin: 8px auto 0;
-  max-width: 760px;
-  padding-left: 22px;
-  line-height: 1.55;
-  color: #0f1f46;
-}
-
-.step-list li {
-  margin: 8px 0;
-}
-
-.function-callout {
-  margin: 0;
-  max-width: 760px;
-  padding: 4px 2px 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: #0f1f46;
-  line-height: 1.5;
-}
-
-.function-block {
-  margin: 8px auto 6px;
-  max-width: 800px;
-  padding: 12px 14px;
-  border: 1px solid rgba(11, 99, 214, 0.28);
-  border-left: 4px solid #0b63d6;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.function-block .note-container {
-  margin-top: 8px;
-}
-
-.function-block .note {
-  margin-top: 8px;
-  margin-bottom: 0;
-}
-
-.hero-controls {
-  display: flex;
-  gap: 14px;
-  justify-content: center;
-  margin-top: 4px
-}
-
-.note-container {
-  display: flex;
-  gap: 14px;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  margin: 4px auto 0;
-  max-width: 760px;
-  box-sizing: border-box;
-  flex-wrap: wrap;
-  padding: 0 8px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
 }
 
 .tool-panel {
+  width: 100%;
   max-width: 840px;
   padding: 16px 18px;
   border: 1px solid rgba(11, 99, 214, 0.2);
@@ -410,6 +245,7 @@ input[type=file] {
 
 .instruction-panel,
 .function-panel {
+  width: 100%;
   max-width: 840px;
   margin: 12px auto 0;
   padding: 14px 16px;
@@ -435,15 +271,140 @@ input[type=file] {
   margin: 6px 0;
 }
 
-.preview-panel {
-  max-width: 100%;
-  margin: 14px auto 0;
-  padding: 16px 18px;
-  border: 1px solid rgba(11, 99, 214, 0.18);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
+.function-block {
+  margin: 8px auto 6px;
+  max-width: 800px;
+  padding: 12px 14px;
+  border: 1px solid rgba(11, 99, 214, 0.28);
+  border-left: 4px solid #0b63d6;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.function-callout {
+  margin: 0;
+  max-width: 760px;
+  padding: 4px 2px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: #0f1f46;
-  box-shadow: 0 8px 24px rgba(14, 42, 99, 0.06);
+  line-height: 1.5;
+}
+
+.function-block .note-container {
+  margin-top: 8px;
+}
+
+.function-block .note {
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+.note-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 760px;
+  margin: 4px auto 0;
+  padding: 0 8px;
+  flex-wrap: wrap;
+}
+
+.note-container > * {
+  min-width: 0;
+}
+
+.action-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.action-row .btn {
+  flex: 0 1 320px;
+  width: 100%;
+  max-width: 320px;
+  min-width: 0;
+}
+
+.action-row-quantity {
+  margin-top: 4px;
+}
+
+.file-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 300px);
+  max-width: 300px;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid rgba(14, 45, 110, 0.06);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 255, 0.98));
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.file-control:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(14, 45, 110, 0.14);
+}
+
+.file-control:active {
+  transform: translateY(-1px);
+}
+
+.file-control .file-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  height: 26px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.file-control:hover .file-btn {
+  background: linear-gradient(90deg, #1f4fc0, #0a8be0);
+}
+
+.file-control:active .file-btn {
+  background: linear-gradient(90deg, #1946a8, #0776c7);
+}
+
+.file-control .file-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-control input[type=file] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .preview-overlay {
@@ -456,6 +417,17 @@ input[type=file] {
   padding: 24px;
   background: rgba(7, 19, 49, 0.48);
   backdrop-filter: blur(10px);
+}
+
+.preview-panel {
+  max-width: 100%;
+  margin: 14px auto 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(11, 99, 214, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f1f46;
+  box-shadow: 0 8px 24px rgba(14, 42, 99, 0.06);
 }
 
 .preview-dialog {
@@ -477,35 +449,35 @@ input[type=file] {
 }
 
 .preview-header span {
+  padding: 6px 10px;
+  border: 1px solid rgba(11, 99, 214, 0.16);
+  border-radius: 999px;
+  background: rgba(14, 165, 255, 0.12);
   color: #0b3b82;
   font-size: 13px;
   font-weight: 700;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(14, 165, 255, 0.12);
-  border: 1px solid rgba(11, 99, 214, 0.16);
 }
 
 .preview-close-btn {
+  flex: 0 0 auto;
+  min-height: 36px;
   margin-left: auto;
   padding: 8px 12px;
-  min-height: 36px;
   border-radius: 10px;
   font-size: 13px;
-  flex: 0 0 auto;
 }
 
 .preview-table-wrap {
   overflow-x: auto;
   max-height: calc(100vh - 210px);
-  border-radius: 10px;
   border: 1px solid rgba(8, 33, 69, 0.08);
+  border-radius: 10px;
 }
 
 .preview-table {
   width: 100%;
-  border-collapse: collapse;
   min-width: 980px;
+  border-collapse: collapse;
   background: #fff;
 }
 
@@ -543,236 +515,201 @@ input[type=file] {
   text-align: center;
 }
 
-.action-row {
+.guided-stepper-card {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.guided-step-hero {
+  padding-bottom: 0;
+}
+
+.guided-step-shell {
   width: 100%;
-  max-width: 652px;
+  max-width: 760px;
   margin: 0 auto;
 }
 
-.action-row .btn {
-  flex: 0 1 320px;
-  max-width: 320px;
-  width: 100%;
-  min-width: 0;
-}
-
-.action-row-quantity {
-  margin-top: 4px;
-}
-
-/* Stacked layout used on the Update Quantity page */
-.note-container>* {
-  min-width: 0;
-  flex: 1 1 180px;
-  box-sizing: border-box;
-  margin: 6px;
-}
-
-/* Tighter stacking for the Update Quantity rows (little to no vertical gap) */
-.note-container.note-quantity {
+.guided-step-panel {
+  min-height: 280px;
+  padding: 34px 30px;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-}
-
-.note-container.note-quantity>* {
-  display: flex;
   justify-content: center;
-  margin: 2px 0;
-  flex: 0 0 auto;
-}
-
-.quantity-card {
-  padding: 36px 36px 20px;
-}
-
-.quantity-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-width: 0;
-}
-
-.quantity-row>label:first-child {
-  min-width: 220px;
-  text-align: right;
-}
-
-/* Make the Update Quantity download button match file input width */
-.note-container.note-quantity .btn {
-  flex: 0 0 auto;
-  width: 300px;
-  max-width: 300px;
-}
-
-.note-container input[type=file],
-.note-container .btn {
-  flex: 1 1 180px;
-  max-width: 320px;
-  min-width: 120px;
-  height: 40px;
-  padding: 8px 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  font-size: 14px;
-}
-
-/* Style the file input's selector button for modern browsers */
-.note-container input[type=file]::file-selector-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 8px 14px;
-  border-radius: 10px;
-  background: linear-gradient(90deg, var(--accent-2), var(--accent));
-  color: #fff;
-  border: 0;
-  margin-right: 10px;
-}
-
-/* WebKit legacy */
-.note-container input[type=file]::-webkit-file-upload-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 8px 14px;
-  border-radius: 10px;
-  background: linear-gradient(90deg, var(--accent-2), var(--accent));
-  color: #fff;
-  border: 0;
-  margin-right: 10px;
-}
-
-/* Center filename text vertically inside the input and keep layout consistent */
-.note-container input[type=file] {
-  display: flex;
-  align-items: center;
-  text-align: left;
-  padding-left: 8px;
-  padding-right: 8px;
-  box-sizing: border-box;
-}
-
-/* Custom file-control (label) so choose + filename align vertically */
-.file-control {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 6px 8px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 255, 0.98));
-  border: 1px solid rgba(14, 45, 110, 0.06);
-  min-width: 260px;
-  width: 300px;
-  max-width: 300px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform .14s ease, box-shadow .14s ease;
-}
-
-.file-control .file-btn {
-  background: linear-gradient(90deg, var(--accent-2), var(--accent));
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-weight: 700;
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 26px;
-  line-height: 1;
-  white-space: nowrap;
-  font-size: 13px;
-}
-
-.file-control:hover .file-btn {
-  background: linear-gradient(90deg, #1f4fc0, #0a8be0);
-}
-
-.file-control:active .file-btn {
-  background: linear-gradient(90deg, #1946a8, #0776c7);
-}
-
-.file-control .file-name {
-  flex: 1 1 auto;
-  min-width: 0;
-  color: var(--muted);
-  font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.file-control input[type=file] {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.file-control:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(14, 45, 110, 0.14);
-}
-
-.file-control:active {
-  transform: translateY(-1px);
-}
-
-.note {
-  font-size: 13px;
-  color: var(--muted);
-  margin-top: 12px
-}
-
-/* center note text inside cards for clearer alignment on single-control pages */
-.card .note {
+  gap: 18px;
+  border: 1px solid rgba(11, 99, 214, 0.12);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(243, 249, 255, 0.96));
+  box-shadow: 0 20px 44px rgba(14, 42, 99, 0.1);
   text-align: center;
-  margin-top: 10px
 }
 
-.card .instruction-panel,
-.card .function-panel {
+.intro-panel {
+  min-height: 240px;
+}
+
+.guided-step-copy {
+  margin: 0;
+  max-width: 560px;
+  color: #0f1f46;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.guided-visual-card {
+  width: min(100%, 420px);
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid rgba(11, 99, 214, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 14px 32px rgba(14, 42, 99, 0.08);
+}
+
+.guided-function-block {
+  width: 100%;
+  margin: 0;
   text-align: left;
 }
 
-/* Optional increased spacing for pages that need more breathing room */
-.card.spacious .lead {
-  margin-bottom: 8px
+.guided-step-status {
+  margin: 14px 0 0;
+  color: #6b7280;
+  text-align: center;
+  font-weight: 600;
+}
+
+.guided-step-status.is-ready {
+  color: #0b63d6;
+}
+
+.guided-step-disclaimer {
+  margin: 10px 0 0;
+  color: #7c5b12;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.guided-step-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.stepper-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 760px;
+  margin: -10px auto 0;
+}
+
+.stepper-progress-meta {
+  display: flex;
+  justify-content: center;
+  color: #0b63d6;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stepper-track-wrap {
+  --stepper-circle-size: 36px;
+  --stepper-track-height: 6px;
+  --stepper-track-offset: 4px;
+  position: relative;
+  padding: var(--stepper-track-offset) 4px 0;
+}
+
+.stepper-track,
+.stepper-track-fill {
+  position: absolute;
+  top: calc(var(--stepper-track-offset) + (var(--stepper-circle-size) - var(--stepper-track-height)) / 2);
+  left: 18px;
+  right: 18px;
+  height: var(--stepper-track-height);
+  border-radius: 999px;
+}
+
+.stepper-track {
+  background: rgba(18, 58, 138, 0.12);
+}
+
+.stepper-track-fill {
+  right: auto;
+  background: linear-gradient(90deg, #123a8a, #0ea5ff);
+  transition: width 0.22s ease;
+}
+
+.stepper-checkpoints {
+  position: relative;
+  display: grid;
+  gap: 16px;
+}
+
+.stepper-checkpoint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepper-circle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  border: 3px solid rgba(18, 58, 138, 0.18);
+  border-radius: 999px;
+  background: #fff;
+  color: #6b7280;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 8px 22px rgba(14, 42, 99, 0.12);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.stepper-circle.is-active {
+  border-color: #0b63d6;
+  color: #0b63d6;
+  transform: translateY(-2px);
+}
+
+.stepper-circle.is-complete {
+  border-color: #0b63d6;
+  background: linear-gradient(135deg, #123a8a, #0ea5ff);
+  color: #fff;
+}
+
+.stepper-checkmark {
+  position: relative;
+  width: 10px;
+  height: 18px;
+  border-right: 3px solid currentColor;
+  border-bottom: 3px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -2px);
 }
 
 .card.spacious .hero-sub {
-  margin-bottom: 6px
-}
-
-.card.spacious .hero-controls {
-  margin-top: 15px
+  margin-bottom: 6px;
 }
 
 .card.spacious .note-container {
-  margin-top: 2px
+  margin-top: 2px;
 }
 
 .card.spacious .note {
-  margin-top: 8px
+  margin-top: 8px;
 }
 
-@media (max-width:1024px) {
+@media (max-width: 1024px) {
   .dashboard {
     width: 236px;
     min-width: 236px;
@@ -793,8 +730,7 @@ input[type=file] {
   }
 }
 
-/* Tablet / medium screens: stack label above input but keep compact widths */
-@media (max-width:900px) {
+@media (max-width: 900px) {
   .app-layout {
     flex-direction: column;
   }
@@ -802,9 +738,9 @@ input[type=file] {
   .dashboard {
     width: 100%;
     min-width: 0;
+    padding: 14px 16px;
     border-right: 0;
     border-bottom: 1px solid rgba(37, 99, 235, 0.08);
-    padding: 14px 16px;
   }
 
   .dashboard-header {
@@ -834,7 +770,6 @@ input[type=file] {
   }
 
   .dash-link {
-    flex: 0 0 auto;
     width: 100%;
     text-align: center;
   }
@@ -857,23 +792,7 @@ input[type=file] {
     max-width: 100%;
   }
 
-  .note-container.note-quantity>* {
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .quantity-row {
-    gap: 8px;
-  }
-
-  .quantity-row>label:first-child {
-    min-width: 0;
-    text-align: center;
-  }
-
-  .quantity-row .file-control,
-  .note-container.note-quantity .btn,
+  .file-control,
   .action-row {
     width: min(100%, 420px);
     max-width: 420px;
@@ -885,16 +804,8 @@ input[type=file] {
   }
 }
 
-@media (max-width:640px) {
-  .app-layout {
-    flex-direction: column;
-  }
-
+@media (max-width: 640px) {
   .dashboard {
-    width: 100%;
-    min-width: 0;
-    border-right: 0;
-    border-bottom: 1px solid rgba(37, 99, 235, 0.08);
     padding: 10px 14px 14px;
   }
 
@@ -906,43 +817,29 @@ input[type=file] {
     width: 64px;
   }
 
-  .dashboard-nav {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    margin-top: 8px;
-  }
-
   .app-main {
     padding: 16px;
     overflow-y: auto;
   }
 
-  .card {
-    padding: 20px
-  }
-
+  .card,
   .quantity-card {
     padding: 20px;
   }
 
-  .controls {
-    flex-direction: column;
-    align-items: stretch
-  }
-
   .hero-title {
-    font-size: 22px
+    font-size: 22px;
   }
 
   .hero-sub {
-    font-size: 14px
+    font-size: 14px;
   }
 
   .note-container {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
-    padding: 0
+    padding: 0;
   }
 
   .tool-panel,
@@ -953,32 +850,34 @@ input[type=file] {
     padding: 12px;
   }
 
-  .preview-overlay {
-    padding: 12px;
-  }
-
-  .note-container .file-control,
-  .note-container .btn {
-    flex: 1 1 100%
-  }
-
-  .quantity-row .file-control,
-  .note-container.note-quantity .btn,
-  .action-row {
+  .file-control {
     width: 100%;
     max-width: none;
+    margin: 0 auto;
+    padding: 8px;
+    justify-content: flex-start;
+  }
+
+  .file-control .file-name {
+    margin-left: 8px;
+    text-align: left;
   }
 
   .action-row {
     flex-direction: column;
-    gap: 10px;
     align-items: stretch;
+    gap: 10px;
+    width: 100%;
     max-width: 320px;
   }
 
   .action-row .btn {
-    max-width: none;
     width: 100%;
+    max-width: none;
+  }
+
+  .preview-overlay {
+    padding: 12px;
   }
 
   .preview-header {
@@ -987,14 +886,10 @@ input[type=file] {
   }
 
   .preview-close-btn {
-    margin-left: 0;
     width: 100%;
     max-width: 320px;
+    margin-left: 0;
     justify-content: center;
-  }
-
-  .preview-panel {
-    overflow: hidden;
   }
 
   .preview-dialog {
@@ -1005,74 +900,62 @@ input[type=file] {
     max-height: calc(100vh - 180px);
   }
 
-  /* Ensure the Update Quantity layout also stacks nicely on small screens */
-  .note-container.note-quantity {
-    align-items: center;
-    gap: 8px;
-    padding: 0
-  }
-
-  .note-container.note-quantity .file-control {
-    flex: 0 0 auto;
-    max-width: 320px;
-    width: 100%;
-  }
-
-  .note-container.note-quantity .btn {
-    flex: 0 0 auto;
-    max-width: 320px;
-    width: 100%;
-  }
-
-  .file-control {
-    padding: 8px;
-    justify-content: flex-start;
-    box-sizing: border-box;
-    margin: 0 auto;
-  }
-
-  .file-control .file-name {
-    max-width: 60%;
-    text-align: left;
-    margin-left: 8px
-  }
-
-  .file-control .file-btn {
-    height: 26px;
-    padding: 6px 10px
-  }
-
-  /* Stack hero action buttons full-width on small screens */
-  .hero-controls {
-    flex-direction: column;
-    gap: 12px
-  }
-
-  .hero-controls .btn {
-    width: 100%;
-    justify-content: center
-  }
-
-  .home-options {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .home-options .btn {
-    width: 100%;
-    max-width: 320px;
-  }
-
   .preview-table th,
   .preview-table td {
     padding: 8px 10px;
     font-size: 12px;
   }
-}
 
-.back {
-  display: inline-block;
-  color: var(--accent-2);
-  text-decoration: none;
-  margin-bottom: 12px
+  .stepper-track-wrap {
+    --stepper-circle-size: 30px;
+  }
+
+  .stepper-track,
+  .stepper-track-fill {
+    left: 12px;
+    right: 12px;
+  }
+
+  .stepper-checkpoints {
+    gap: 8px;
+  }
+
+  .stepper-circle {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .stepper-checkmark {
+    width: 8px;
+    height: 14px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+  }
+
+  .guided-step-panel {
+    min-height: 0;
+    padding: 24px 18px;
+  }
+
+  .guided-step-copy {
+    font-size: 16px;
+  }
+
+  .guided-step-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .guided-step-actions .btn.secondary {
+    order: 2;
+  }
+
+  .guided-step-actions .btn:not(.secondary) {
+    order: 1;
+  }
+
+  .guided-step-actions .btn {
+    width: min(100%, 220px);
+  }
 }

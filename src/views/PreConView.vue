@@ -150,8 +150,8 @@ function closePreview() {
 </script>
 
 <template>
-  <div class="card spacious tool-card step-card precon-stepper-card">
-    <div class="hero precon-hero">
+  <div class="card spacious tool-card step-card guided-stepper-card precon-stepper-card">
+    <div class="hero guided-step-hero precon-hero">
       <div class="hero-title">{{ currentContent.title }}</div>
       <div v-if="currentStage === 0" class="hero-sub precon-subtitle">{{ currentContent.description }}</div>
     </div>
@@ -191,20 +191,20 @@ function closePreview() {
       </div>
     </div>
 
-    <div class="precon-step-shell">
-      <div v-if="currentStage === 0" class="precon-panel intro-panel">
-        <p class="precon-copy">
+    <div class="guided-step-shell precon-step-shell">
+      <div v-if="currentStage === 0" class="precon-panel guided-step-panel intro-panel">
+        <p class="precon-copy guided-step-copy">
           This walkthrough breaks the process into one action at a time so you can move through the conversion in order.
         </p>
         <button class="btn" type="button" @click="goNext">Start Steps</button>
       </div>
 
-      <div v-else-if="currentStage === 1" class="precon-panel precon-panel-step1">
+      <div v-else-if="currentStage === 1" class="precon-panel guided-step-panel precon-panel-step1">
         <div class="precon-step-number">01</div>
-        <p class="precon-copy">
+        <p class="precon-copy guided-step-copy">
           Export Shopify inventory CSV.
         </p>
-        <div class="precon-visual-card" aria-label="Step 1 visual guide">
+        <div class="precon-visual-card guided-visual-card" aria-label="Step 1 visual guide">
           <InfiniteCarousel
             :slides="stepVisuals[1]"
             label="Step 1 visual guide"
@@ -213,10 +213,10 @@ function closePreview() {
         </div>
       </div>
 
-      <div v-else-if="currentStage === 2" class="precon-panel">
+      <div v-else-if="currentStage === 2" class="precon-panel guided-step-panel">
         <div class="precon-step-number">02</div>
-        <div class="function-block precon-function-block">
-          <p class="precon-copy precon-convert-copy">
+        <div class="function-block guided-function-block precon-function-block">
+          <p class="precon-copy guided-step-copy precon-convert-copy">
             Upload it to the tool here, review the preview if needed, then click <strong>Download Square Ready CSV</strong>.
           </p>
 
@@ -226,21 +226,21 @@ function closePreview() {
             Reads the Shopify CSV and creates a Square-ready CSV mapped by key fields such as <strong>SKU</strong>, <strong>Handle</strong>, and other import-ready columns.
           </div>
 
-          <p class="precon-status" :class="{ 'is-ready': hasConverted }">
+          <p class="precon-status guided-step-status" :class="{ 'is-ready': hasConverted }">
             {{ hasConverted ? 'Square-ready CSV created. Continue with the final import step.' : 'Generate the Square-ready CSV to complete this step.' }}
           </p>
 
           <div class="note-container precon-upload-row">
-            <label class="file-control">
+            <label class="file-control precon-file-control">
               <span class="file-btn">Choose File</span>
               <span class="file-name">{{ fileName }}</span>
               <input type="file" accept=".csv,.xlsx,.xls" @change="onFileChange" />
             </label>
-            <div class="action-row">
-              <button class="btn" type="button" :disabled="isProcessing" @click="onConvert">
+            <div class="action-row precon-action-row">
+              <button class="btn precon-action-btn" type="button" :disabled="isProcessing" @click="onConvert">
                 {{ isProcessing ? 'Processing…' : 'Download Square Ready CSV' }}
               </button>
-              <button class="btn secondary" type="button" :disabled="isPreviewLoading" @click="onPreview">
+              <button class="btn secondary precon-action-btn" type="button" :disabled="isPreviewLoading" @click="onPreview">
                 {{ isPreviewLoading ? 'Loading preview…' : 'Preview First 5 Rows' }}
               </button>
             </div>
@@ -249,12 +249,12 @@ function closePreview() {
         </div>
       </div>
 
-      <div v-else class="precon-panel">
+      <div v-else class="precon-panel guided-step-panel">
         <div class="precon-step-number">03</div>
-        <p class="precon-copy">
+        <p class="precon-copy guided-step-copy">
           Import the downloaded CSV into Square, then review the import results and resolve any warnings before you move on.
         </p>
-        <div class="precon-visual-card" aria-label="Step 3 visual guide">
+        <div class="precon-visual-card guided-visual-card" aria-label="Step 3 visual guide">
           <InfiniteCarousel
             :slides="stepVisuals[3]"
             label="Step 3 visual guide"
@@ -265,11 +265,11 @@ function closePreview() {
       </div>
     </div>
 
-    <p v-if="currentStage === 2" class="precon-disclaimer">
+    <p v-if="currentStage === 2" class="precon-disclaimer guided-step-disclaimer">
       Make sure you download the Square CSV before clicking Next Step.
     </p>
 
-    <div v-if="currentStage > 0" class="precon-actions">
+    <div v-if="currentStage > 0" class="precon-actions guided-step-actions">
       <button class="btn secondary" type="button" :disabled="currentStage === 0" @click="goBack">
         Back
       </button>
@@ -317,143 +317,8 @@ function closePreview() {
 </template>
 
 <style scoped>
-.precon-stepper-card {
-  display: flex;
-  flex-direction: column;
-  gap: 26px;
-}
-
-.precon-hero {
-  padding-bottom: 0;
-}
-
 .precon-subtitle {
   max-width: 620px;
-}
-
-.stepper-progress {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-width: 760px;
-  margin: 0 auto;
-  margin-top: -10px;
-  width: 100%;
-}
-
-.stepper-progress-meta {
-  display: flex;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #0b63d6;
-}
-
-.stepper-track-wrap {
-  --stepper-circle-size: 36px;
-  --stepper-track-height: 6px;
-  --stepper-track-offset: 4px;
-  position: relative;
-  padding: var(--stepper-track-offset) 4px 0;
-}
-
-.stepper-track,
-.stepper-track-fill {
-  position: absolute;
-  top: calc(var(--stepper-track-offset) + (var(--stepper-circle-size) - var(--stepper-track-height)) / 2);
-  left: 18px;
-  right: 18px;
-  height: var(--stepper-track-height);
-  border-radius: 999px;
-}
-
-.stepper-track {
-  background: rgba(18, 58, 138, 0.12);
-}
-
-.stepper-track-fill {
-  right: auto;
-  background: linear-gradient(90deg, #123a8a, #0ea5ff);
-  transition: width 0.22s ease;
-}
-
-.stepper-checkpoints {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.stepper-checkpoint {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.stepper-circle {
-  position: relative;
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: #fff;
-  border: 3px solid rgba(18, 58, 138, 0.18);
-  color: #6b7280;
-  line-height: 1;
-  font-weight: 800;
-  box-shadow: 0 8px 22px rgba(14, 42, 99, 0.12);
-  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
-}
-
-.stepper-circle.is-active {
-  border-color: #0b63d6;
-  color: #0b63d6;
-  transform: translateY(-2px);
-}
-
-.stepper-circle.is-complete {
-  background: linear-gradient(135deg, #123a8a, #0ea5ff);
-  border-color: #0b63d6;
-  color: #fff;
-}
-
-.stepper-checkmark {
-  position: relative;
-  width: 10px;
-  height: 18px;
-  border-right: 3px solid currentColor;
-  border-bottom: 3px solid currentColor;
-  transform: rotate(45deg) translate(-1px, -2px);
-}
-
-.precon-step-shell {
-  max-width: 760px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.precon-panel {
-  min-height: 280px;
-  padding: 34px 30px;
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(243, 249, 255, 0.96));
-  border: 1px solid rgba(11, 99, 214, 0.12);
-  box-shadow: 0 20px 44px rgba(14, 42, 99, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  text-align: center;
-}
-
-.intro-panel {
-  min-height: 240px;
 }
 
 .precon-step-number {
@@ -464,290 +329,109 @@ function closePreview() {
   color: #0b63d6;
 }
 
-.precon-copy {
-  margin: 0;
-  max-width: 560px;
-  font-size: 18px;
-  line-height: 1.65;
-  color: #0f1f46;
-}
-
-.precon-visual-card {
-  width: min(100%, 420px);
-  margin-top: 8px;
-  padding: 12px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(11, 99, 214, 0.14);
-  box-shadow: 0 14px 32px rgba(14, 42, 99, 0.08);
-}
-
-.precon-visual-frame-wrap {
-  position: relative;
-}
-
-.precon-visual-frame {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  touch-action: pan-x pinch-zoom;
-  aspect-ratio: 4 / 3;
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(240, 247, 255, 0.95), rgba(227, 238, 252, 0.9));
-  border: 1px solid rgba(18, 58, 138, 0.08);
-}
-
-.precon-visual-frame::-webkit-scrollbar {
-  display: none;
-}
-
-.precon-visual-image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-width: 100%;
-  object-fit: cover;
-  object-position: top center;
-  scroll-snap-align: center;
-}
-
-.precon-visual-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 12px;
-}
-
-.precon-visual-nav {
-  position: absolute;
-  top: 50%;
-  z-index: 1;
-  width: 36px;
-  height: 36px;
-  aspect-ratio: 1 / 1;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.44);
-  border-radius: 999px;
-  background: rgba(10, 24, 55, 0.22);
-  backdrop-filter: blur(6px);
-  color: #123a8a;
-  font-size: 20px;
-  font-weight: 800;
-  line-height: 1;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transform: translateY(-50%);
-}
-
-.precon-visual-nav:hover {
-  background: rgba(10, 24, 55, 0.32);
-}
-
-.precon-visual-nav span {
-  color: #fff;
-  transform: translateY(-1px);
-}
-
-.precon-visual-nav.is-left {
-  left: 10px;
-}
-
-.precon-visual-nav.is-right {
-  right: 10px;
-}
-
-.precon-visual-dots {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.precon-visual-dot {
-  width: 10px;
-  height: 10px;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background: rgba(18, 58, 138, 0.18);
-  cursor: pointer;
-  transition: transform 0.18s ease, background 0.18s ease;
-}
-
-.precon-visual-dot.is-active {
-  background: #0b63d6;
-  transform: scale(1.15);
-}
-
 .precon-convert-copy {
   max-width: 100%;
   margin-bottom: 6px;
 }
 
-.precon-status {
-  margin: 14px 0 0;
-  color: #6b7280;
-  text-align: center;
-  font-weight: 600;
-}
-
-.precon-status.is-ready {
-  color: #0b63d6;
-}
-
-.precon-disclaimer {
-  margin: 10px 0 0;
-  color: #7c5b12;
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.precon-function-block {
-  width: 100%;
-  margin: 0;
-  text-align: left;
-}
-
 .precon-upload-row {
-  margin-top: 16px;
+  --precon-control-width: 320px;
+  margin-top: 24px;
   width: 100%;
+  max-width: 840px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, var(--precon-control-width)));
+  align-items: center;
+  justify-content: center;
+  column-gap: 28px;
+  row-gap: 10px;
+}
+
+.precon-upload-row > * {
+  min-width: 0;
+  margin: 0;
 }
 
 .precon-upload-row .file-control,
 .precon-upload-row .action-row {
-  width: 100%;
-  max-width: 320px;
-  margin-left: auto;
-  margin-right: auto;
+  width: min(100%, var(--precon-control-width));
+  max-width: min(100%, var(--precon-control-width));
+  margin: 0;
+}
+
+.precon-upload-row .precon-file-control {
+  min-height: 40px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  box-sizing: border-box;
+}
+
+.precon-upload-row .precon-file-control .file-btn {
+  height: 24px;
 }
 
 .precon-upload-row .action-row {
   flex-direction: column;
   align-items: stretch;
+  margin-top: 10px;
+  gap: 10px;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 .precon-upload-row .action-row .btn {
   flex: 0 0 auto;
   max-width: none;
   width: 100%;
+  min-height: 44px;
 }
 
-.precon-actions {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-}
-
-@media (max-width: 640px) {
-  .stepper-track-wrap {
-    --stepper-circle-size: 30px;
-  }
-
-  .stepper-track,
-  .stepper-track-fill {
-    left: 12px;
-    right: 12px;
-  }
-
-  .stepper-checkpoints {
-    gap: 8px;
-  }
-
-  .stepper-circle {
-    width: 30px;
-    height: 30px;
-    font-size: 12px;
-  }
-
-  .stepper-checkmark {
-    width: 8px;
-    height: 14px;
-    border-right-width: 2px;
-    border-bottom-width: 2px;
-  }
-
-  .precon-panel {
-    min-height: 0;
-    padding: 24px 18px;
-  }
-
-  .precon-copy {
-    font-size: 16px;
-  }
-
-  .precon-visual-card {
-    padding: 12px;
-  }
-
+@media (max-width: 760px) {
   .precon-panel-step1 {
     gap: 12px;
     padding-top: 20px;
     padding-bottom: 20px;
   }
+}
 
-  .precon-visual-frame {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .precon-visual-nav {
-    width: 32px;
-    height: 32px;
-    font-size: 20px;
-  }
-
+@media (max-width: 640px) {
   .precon-upload-row {
-    display: grid;
-    justify-items: center;
-    gap: 4px;
-  }
-
-  .precon-upload-row > * {
-    margin: 0;
-    min-width: 0;
-    flex: 0 0 auto;
-  }
-
-  .precon-upload-row .file-control {
-    min-width: 0;
     width: 100%;
-    max-width: 320px;
-    margin-bottom: 0;
-    padding-top: 6px;
-    padding-bottom: 6px;
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .precon-upload-row .precon-file-control,
+  .precon-upload-row .precon-action-btn {
+    min-width: 0;
+    width: min(100%, var(--precon-control-width)) !important;
+    max-width: min(100%, var(--precon-control-width)) !important;
+    box-sizing: border-box;
+    margin: 0 auto;
   }
 
   .precon-upload-row .file-name {
     max-width: calc(100% - 110px);
   }
 
-  .precon-upload-row .action-row {
-    display: grid;
-    max-width: 320px;
+  .precon-upload-row .precon-file-control {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .precon-upload-row .precon-action-row {
+    width: min(100%, var(--precon-control-width));
+    max-width: min(100%, var(--precon-control-width));
     margin-top: 0;
-    gap: 6px;
+    gap: 8px;
   }
 
-  .precon-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .precon-actions .btn.secondary {
-    order: 2;
-  }
-
-  .precon-actions .btn:not(.secondary) {
-    order: 1;
-  }
-
-  .precon-actions .btn {
-    width: min(100%, 220px);
+  .precon-upload-row .precon-action-btn {
+    min-width: 0;
+    flex: 0 0 auto;
   }
 }
 </style>

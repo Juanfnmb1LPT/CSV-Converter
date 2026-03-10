@@ -36,6 +36,25 @@
   display: flex;
   flex-direction: column;
   gap: 22px;
+  padding: 48px;
+  text-align: center;
+}
+
+.home-sub-large {
+  margin: 12px auto 0;
+  font-size: 20px;
+  line-height: 1.45;
+  font-weight: 300;
+  color: #0b2545;
+}
+
+.home-options {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: auto;
+  padding-top: 12px;
+  flex-wrap: wrap;
 }
 
 .home-grid {
@@ -79,12 +98,24 @@
 }
 
 .home-options-advanced {
-  margin-top: 0;
+  padding-top: 12px;
 }
 
 @media (max-width: 900px) {
   .home-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-options {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .home-options .btn {
+    width: 100%;
+    max-width: 320px;
   }
 }
 </style>

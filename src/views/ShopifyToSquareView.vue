@@ -182,6 +182,8 @@ function closePreview() {
   flex-direction: column;
   align-items: stretch;
   gap: 10px;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 .shopifytosquare-upload-row .action-row .btn {
