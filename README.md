@@ -28,6 +28,15 @@ npm run dev
 
 Open the URL shown by Vite (usually `http://localhost:5173`).
 
+## Login
+
+The app now requires login before accessing tools.
+
+- Username: `admin`
+- Password: `test`
+
+Successful login is persisted in the browser, so users stay signed in across refresh/reopen until they click Logout.
+
 ## Build
 
 ```bash
@@ -51,7 +60,8 @@ Routing uses hash mode (`/#/`) so direct page refresh works on GitHub Pages with
 
 ## App routes
 
-- `/` Home page with step page options
+- `/#/login` Login page
+- `/` Home page with step page options (requires login)
 - `/#/pre-con` Pre-Con step page
 - `/#/post-con` Post-Con step page
 - `/#/shopify-to-square` Shopify → Square tool
