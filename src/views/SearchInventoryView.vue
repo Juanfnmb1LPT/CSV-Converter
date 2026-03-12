@@ -1,25 +1,27 @@
 <script setup>
-import { Html5Qrcode } from 'html5-qrcode';
-import QRCode from 'qrcode';
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { hasSupabaseConfig, supabase } from '../lib/supabase';
+import { Html5Qrcode } from "html5-qrcode";
+import QRCode from "qrcode";
+import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { hasSupabaseConfig, supabase } from "../lib/supabase";
 
 const router = useRouter();
-const searchTerm = ref('');
+const searchTerm = ref("");
 const bins = ref([]);
 const isLoading = ref(true);
-const errorMessage = ref('');
+const errorMessage = ref("");
 const isScanning = ref(false);
-const scannerError = ref('');
-const qrPrintError = ref('');
-const printingBinId = ref('');
+const scannerError = ref("");
+const qrPrintError = ref("");
+const printingBinId = ref("");
 
 let scannerInstance = null;
 let hasHandledDecode = false;
 
 function normalizeValue(value) {
-  return String(value || '').trim().toLowerCase();
+  return String(value || "")
+    .trim()
+    .toLowerCase();
 }
 
 async function stopScan() {
@@ -52,7 +54,7 @@ async function handleDecodedText(decodedText) {
   }
 
   hasHandledDecode = true;
-  const scannedValue = String(decodedText || '').trim();
+  const scannedValue = String(decodedText || "").trim();
 
   if (!scannedValue) {
     hasHandledDecode = false;
@@ -62,7 +64,9 @@ async function handleDecodedText(decodedText) {
   searchTerm.value = scannedValue;
   await stopScan();
 
-  const matchedBin = bins.value.find((bin) => normalizeValue(bin.id) === normalizeValue(scannedValue));
+  const matchedBin = bins.value.find(
+    (bin) => normalizeValue(bin.id) === normalizeValue(scannedValue)
+  );
 
   if (matchedBin) {
     router.push(`/search-inventory/${matchedBin.id}`);
@@ -70,23 +74,24 @@ async function handleDecodedText(decodedText) {
 }
 
 async function startScan() {
-  scannerError.value = '';
+  scannerError.value = "";
 
   if (isScanning.value) {
     return;
   }
 
   if (!window.isSecureContext) {
-    scannerError.value = 'Camera scanning requires HTTPS or localhost.';
+    scannerError.value = "Camera scanning requires HTTPS or localhost.";
     return;
   }
 
   if (!navigator.mediaDevices?.getUserMedia) {
-    scannerError.value = 'This browser does not support camera access for scanning.';
+    scannerError.value =
+      "This browser does not support camera access for scanning.";
     return;
   }
 
-  const scannerTargetId = 'qr-reader';
+  const scannerTargetId = "qr-reader";
   isScanning.value = true;
   hasHandledDecode = false;
   await nextTick();
@@ -95,7 +100,7 @@ async function startScan() {
 
   try {
     await scannerInstance.start(
-      { facingMode: 'environment' },
+      { facingMode: "environment" },
       {
         fps: 10,
         qrbox: { width: 260, height: 260 },
@@ -105,35 +110,35 @@ async function startScan() {
       }
     );
   } catch (error) {
-    scannerError.value = error?.message || 'Unable to start camera scanning.';
+    scannerError.value = error?.message || "Unable to start camera scanning.";
     await stopScan();
   }
 }
 
 function escapeHtml(value) {
-  return String(value || '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 async function printBinQr(bin) {
-  qrPrintError.value = '';
-  printingBinId.value = String(bin.id || '');
+  qrPrintError.value = "";
+  printingBinId.value = String(bin.id || "");
 
   try {
-    const qrDataUrl = await QRCode.toDataURL(String(bin.id || ''), {
+    const qrDataUrl = await QRCode.toDataURL(String(bin.id || ""), {
       width: 320,
       margin: 1,
-      errorCorrectionLevel: 'M'
+      errorCorrectionLevel: "M",
     });
 
-    const printWindow = window.open('', '_blank', 'width=540,height=700');
+    const printWindow = window.open("", "_blank", "width=540,height=700");
 
     if (!printWindow) {
-      throw new Error('Popup blocked. Allow popups to print QR labels.');
+      throw new Error("Popup blocked. Allow popups to print QR labels.");
     }
 
     const safeName = escapeHtml(bin.name || bin.id);
@@ -161,34 +166,23 @@ async function printBinQr(bin) {
               text-align: center;
             }
             .title {
-              font-size: 22px;
-              font-weight: 700;
-              margin-bottom: 8px;
-            }
-            .subtitle {
-              font-size: 14px;
-              margin-bottom: 16px;
-              color: #334155;
+              font-size: 48px;
+              font-weight: 800;
+              line-height: 1.05;
+              margin-bottom: 18px;
             }
             img {
               width: 300px;
               height: 300px;
               display: block;
-              margin: 0 auto 12px;
-            }
-            .bin-id {
-              font-size: 18px;
-              font-weight: 700;
-              letter-spacing: 0.06em;
+              margin: 0 auto;
             }
           </style>
         </head>
         <body>
           <main class="label">
             <div class="title">${safeName}</div>
-            <div class="subtitle">Inventory Bin Label</div>
             <img src="${qrDataUrl}" alt="QR code for ${safeId}" />
-            <div class="bin-id">${safeId}</div>
           </main>
           <script>
             window.onload = function () {
@@ -201,9 +195,10 @@ async function printBinQr(bin) {
 
     printWindow.document.close();
   } catch (error) {
-    qrPrintError.value = error?.message || 'Unable to generate printable QR label.';
+    qrPrintError.value =
+      error?.message || "Unable to generate printable QR label.";
   } finally {
-    printingBinId.value = '';
+    printingBinId.value = "";
   }
 }
 
@@ -217,7 +212,7 @@ const filteredBins = computed(() => {
   return bins.value.filter((bin) => {
     const haystack = [bin.id, bin.name, ...bin.items.map((item) => item.name)]
       .filter(Boolean)
-      .join(' ')
+      .join(" ")
       .toLowerCase();
 
     return haystack.includes(normalizedQuery);
@@ -226,21 +221,29 @@ const filteredBins = computed(() => {
 
 async function loadBins() {
   if (!hasSupabaseConfig || !supabase) {
-    errorMessage.value = 'Add VITE_SUPABASE_ANON_KEY to load bins from Supabase.';
+    errorMessage.value =
+      "Add VITE_SUPABASE_ANON_KEY to load bins from Supabase.";
     isLoading.value = false;
     return;
   }
 
   isLoading.value = true;
-  errorMessage.value = '';
+  errorMessage.value = "";
 
-  const [{ data: binData, error: binError }, { data: itemData, error: itemError }] = await Promise.all([
-    supabase.from('bins').select('id, name').order('id', { ascending: true }),
-    supabase.from('items').select('id, name, bin_id').order('name', { ascending: true })
+  const [
+    { data: binData, error: binError },
+    { data: itemData, error: itemError },
+  ] = await Promise.all([
+    supabase.from("bins").select("id, name").order("id", { ascending: true }),
+    supabase
+      .from("items")
+      .select("id, name, bin_id")
+      .order("name", { ascending: true }),
   ]);
 
   if (binError || itemError) {
-    errorMessage.value = binError?.message || itemError?.message || 'Unable to load bins.';
+    errorMessage.value =
+      binError?.message || itemError?.message || "Unable to load bins.";
     bins.value = [];
   } else {
     const itemsByBinId = (itemData || []).reduce((groupedItems, item) => {
@@ -254,7 +257,7 @@ async function loadBins() {
 
     bins.value = (binData || []).map((bin) => ({
       ...bin,
-      items: itemsByBinId[bin.id] || []
+      items: itemsByBinId[bin.id] || [],
     }));
   }
 
@@ -275,7 +278,9 @@ onUnmounted(stopScan);
     </div>
 
     <div class="inventory-search-panel reveal-fade-up reveal-delay-1">
-      <label class="inventory-search-label" for="inventory-search-input">Search bins</label>
+      <label class="inventory-search-label" for="inventory-search-input"
+        >Search bins</label
+      >
 
       <div class="inventory-search-row">
         <input
@@ -293,11 +298,13 @@ onUnmounted(stopScan);
           @click="isScanning ? stopScan() : startScan()"
         >
           <span class="inventory-scan-icon" aria-hidden="true">CAM</span>
-          <span>{{ isScanning ? 'Stop' : 'Scan' }}</span>
+          <span>{{ isScanning ? "Stop" : "Scan" }}</span>
         </button>
       </div>
 
-      <p class="inventory-search-help">Scan a printed bin QR code to jump directly to that bin.</p>
+      <p class="inventory-search-help">
+        Scan a printed bin QR code to jump directly to that bin.
+      </p>
 
       <p v-if="scannerError" class="inventory-scan-error">{{ scannerError }}</p>
       <p v-if="qrPrintError" class="inventory-scan-error">{{ qrPrintError }}</p>
@@ -308,9 +315,7 @@ onUnmounted(stopScan);
     </div>
 
     <div class="inventory-grid reveal-fade-up reveal-delay-2">
-      <div v-if="isLoading" class="inventory-empty-state">
-        Loading bins...
-      </div>
+      <div v-if="isLoading" class="inventory-empty-state">Loading bins...</div>
 
       <div v-else-if="errorMessage" class="inventory-empty-state">
         {{ errorMessage }}
@@ -321,14 +326,19 @@ onUnmounted(stopScan);
         :key="bin.id"
         class="inventory-bin-card"
       >
-        <router-link class="inventory-bin-link" :to="`/search-inventory/${bin.id}`">
+        <router-link
+          class="inventory-bin-link"
+          :to="`/search-inventory/${bin.id}`"
+        >
           <div class="inventory-bin-name">{{ bin.name }}</div>
 
           <div class="inventory-bin-summary">Items:</div>
 
           <ul class="inventory-preview-list">
             <li v-for="item in bin.items" :key="item.id">{{ item.name }}</li>
-            <li v-if="!bin.items.length" class="inventory-preview-empty">No items in this bin.</li>
+            <li v-if="!bin.items.length" class="inventory-preview-empty">
+              No items in this bin.
+            </li>
           </ul>
         </router-link>
 
@@ -339,12 +349,19 @@ onUnmounted(stopScan);
             :disabled="printingBinId === String(bin.id)"
             @click="printBinQr(bin)"
           >
-            {{ printingBinId === String(bin.id) ? 'Preparing label...' : 'Print QR Label' }}
+            {{
+              printingBinId === String(bin.id)
+                ? "Preparing label..."
+                : "Print QR Label"
+            }}
           </button>
         </div>
       </article>
 
-      <div v-if="!isLoading && !errorMessage && !filteredBins.length" class="inventory-empty-state">
+      <div
+        v-if="!isLoading && !errorMessage && !filteredBins.length"
+        class="inventory-empty-state"
+      >
         No bins matched that search.
       </div>
     </div>
@@ -493,7 +510,8 @@ onUnmounted(stopScan);
   gap: 12px;
   color: inherit;
   text-decoration: none;
-  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+  transition: transform 0.16s ease, border-color 0.16s ease,
+    box-shadow 0.16s ease, background-color 0.16s ease;
 }
 
 .inventory-bin-link:hover {
