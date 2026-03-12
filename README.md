@@ -12,6 +12,7 @@ All parsing and processing runs locally in the browser. No file data is uploaded
 - Upload input supports CSV, XLSX, and XLS files
 - Excel uploads use the first sheet and first row as headers, then flatten to row-based data
 - Client-side parsing via PapaParse (CSV) and SheetJS (Excel)
+- Search Inventory with QR scan support for bin lookup and auto-navigation
 
 ## Run locally
 
@@ -27,6 +28,15 @@ npm run dev
 ```
 
 Open the URL shown by Vite (usually `http://localhost:5173`).
+
+## Login
+
+The app now requires login before accessing tools.
+
+- Username: `admin`
+- Password: `test`
+
+Successful login is persisted in the browser, so users stay signed in across refresh/reopen until they click Logout.
 
 ## Build
 
@@ -51,11 +61,23 @@ Routing uses hash mode (`/#/`) so direct page refresh works on GitHub Pages with
 
 ## App routes
 
-- `/` Home page with step page options
+- `/#/login` Login page
+- `/` Home page with step page options (requires login)
 - `/#/pre-con` Pre-Con step page
 - `/#/post-con` Post-Con step page
 - `/#/shopify-to-square` Shopify → Square tool
 - `/#/update-quantity` Update Shopify quantity tool
+- `/#/search-inventory` Search inventory page
+- `/#/search-inventory/:id` Bin detail page
+
+## QR scanning for bins
+
+- Use the camera button on Search Inventory to scan a physical bin QR label.
+- Use the `Print QR Label` action on each bin card in Search Inventory to generate printable labels.
+- QR payload should be the plain bin ID only (example: `bin-1`), not a full URL.
+- On successful scan, the app fills the search input and auto-navigates when an exact bin ID match is found.
+- If there is no exact match, the scan result remains in the search box so users can pick from filtered results.
+- Camera access requires a secure context in production (HTTPS). `localhost` works during development.
 
 The app uses a persistent left dashboard for navigation between all pages.
 
