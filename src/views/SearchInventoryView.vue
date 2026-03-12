@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { hasSupabaseConfig, supabase } from "../lib/supabase";
+import ShopifyExportVariations from '../components/ShopifyExportVariations.vue';
 import { createBin, updateBinName, binHasItems, deleteBin } from "../lib/binCrud";
 import BinFormModal from "../components/BinFormModal.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
@@ -11,6 +12,7 @@ import ConfirmModal from "../components/ConfirmModal.vue";
 const router = useRouter();
 const searchTerm = ref("");
 const bins = ref([]);
+const totalVariations = ref(null);
 const isLoading = ref(true);
 const errorMessage = ref("");
 const isScanning = ref(false);
@@ -410,6 +412,20 @@ async function loadBins() {
       return groupedItems;
     }, {});
 
+    bins.value = (binData || []).map((bin) => ({
+      ...bin,
+      items: itemsByBinId[bin.id] || [],
+    }));
+
+    // Fetch total item_variations count for display
+    try {
+      const { data: _d, error: countError, count } = await supabase
+        .from('item_variations')
+        .select('id', { count: 'exact', head: true });
+      totalVariations.value = countError ? null : (count ?? 0);
+    } catch (e) {
+      totalVariations.value = null;
+    }
     bins.value = (binData || []).map((bin) => {
       const groupedItems = itemsByBinId[bin.id] || [];
       const computedBinTotal = groupedItems.reduce(
@@ -445,7 +461,7 @@ onUnmounted(stopScan);
         + Create Bin
       </button>
     </div>
-
+<div class="inventory-total">Total item types: {{ totalVariations === null ? '—' : totalVariations }}</div>
     <div class="inventory-search-panel reveal-fade-up reveal-delay-1">
       <label class="inventory-search-label" for="inventory-search-input"
         >Search bins</label
@@ -484,6 +500,7 @@ onUnmounted(stopScan);
     </div>
 
     <div class="inventory-grid reveal-fade-up reveal-delay-2">
+      <ShopifyExportVariations />
       <div v-if="isLoading" class="inventory-empty-state">Loading bins...</div>
 
       <div v-else-if="errorMessage" class="inventory-empty-state">
@@ -607,6 +624,10 @@ onUnmounted(stopScan);
   display: flex;
   align-items: center;
   gap: 12px;
+}
+.inventory-total {  
+  text-align: center;
+  font-weight: bold;
 }
 
 .inventory-search-input {
