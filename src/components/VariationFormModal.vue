@@ -71,7 +71,7 @@ function onSubmit() {
 
 <template>
     <Teleport to="body">
-        <div class="entity-modal-backdrop" @click.self="emit('cancel')">
+        <div class="entity-modal-backdrop">
             <div class="entity-modal-dialog" role="dialog" :aria-label="dialogTitle">
                 <div class="entity-modal-header">
                     <div>

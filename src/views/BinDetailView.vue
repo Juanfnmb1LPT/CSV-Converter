@@ -2,8 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
-import { updateBinName, binHasItems, deleteBin } from '../lib/binCrud';
-import { createItem, updateItem, itemHasVariations, deleteItem } from '../lib/itemCrud';
+import { updateBinName, deleteBin } from '../lib/binCrud';
+import { createItem, updateItem, deleteItem } from '../lib/itemCrud';
 import { createVariation, updateVariation, deleteVariation } from '../lib/variationCrud';
 import BinFormModal from '../components/BinFormModal.vue';
 import ConfirmModal from '../components/ConfirmModal.vue';
@@ -255,7 +255,7 @@ function openEditItem(item) {
 function openDeleteItem(item) {
   itemDeleteError.value = '';
   deletingItem.value = item;
-  itemDeleteMessage.value = `Delete "${item.name}"? This action cannot be undone.`;
+  itemDeleteMessage.value = `Delete "${item.name}" and all variations in it? This action cannot be undone.`;
   showDeleteItemConfirm.value = true;
 }
 
@@ -310,20 +310,6 @@ async function onEditItemSubmit({ name, binId: targetBinId }) {
 async function onDeleteItemConfirm() {
   itemDeleteError.value = '';
   isItemDeleting.value = true;
-
-  const checkResult = await itemHasVariations(deletingItem.value?.id);
-
-  if (!checkResult.ok) {
-    itemDeleteError.value = checkResult.error;
-    isItemDeleting.value = false;
-    return;
-  }
-
-  if (checkResult.hasVariations) {
-    itemDeleteError.value = `"${deletingItem.value?.name}" still has variations attached. Remove all variations before deleting this item.`;
-    isItemDeleting.value = false;
-    return;
-  }
 
   const deleteResult = await deleteItem(deletingItem.value?.id);
   isItemDeleting.value = false;
@@ -444,7 +430,7 @@ function openEdit() {
 
 function openDelete() {
   deleteError.value = '';
-  deleteConfirmMessage.value = `Delete "${bin.value?.name}"? This action cannot be undone.`;
+  deleteConfirmMessage.value = `Delete "${bin.value?.name}" and all items/variations in it? This action cannot be undone.`;
   showDeleteConfirm.value = true;
 }
 
@@ -464,17 +450,6 @@ async function onEditSubmit({ name }) {
 async function onDeleteConfirm() {
   deleteError.value = '';
   isDeleting.value = true;
-  const checkResult = await binHasItems(binId.value);
-  if (!checkResult.ok) {
-    deleteError.value = checkResult.error;
-    isDeleting.value = false;
-    return;
-  }
-  if (checkResult.hasItems) {
-    deleteError.value = `"${bin.value?.name}" still has items attached. Remove all items before deleting this bin.`;
-    isDeleting.value = false;
-    return;
-  }
   const deleteResult = await deleteBin(binId.value);
   isDeleting.value = false;
   if (!deleteResult.ok) {

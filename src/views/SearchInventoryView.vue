@@ -5,7 +5,7 @@ import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { hasSupabaseConfig, supabase } from "../lib/supabase";
 import ShopifyExportVariations from '../components/ShopifyExportVariations.vue';
-import { createBin, updateBinName, binHasItems, deleteBin } from "../lib/binCrud";
+import { createBin, updateBinName, deleteBin } from "../lib/binCrud";
 import BinFormModal from "../components/BinFormModal.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
 
@@ -296,7 +296,7 @@ function openEdit(bin) {
 function openDelete(bin) {
   deletingBin.value = bin;
   deleteError.value = "";
-  deleteConfirmMessage.value = `Delete "${bin.name}"? This action cannot be undone.`;
+  deleteConfirmMessage.value = `Delete "${bin.name}" and all items/variations in it? This action cannot be undone.`;
   showDeleteConfirm.value = true;
 }
 
@@ -330,17 +330,6 @@ async function onEditSubmit({ name }) {
 async function onDeleteConfirm() {
   deleteError.value = "";
   isDeleting.value = true;
-  const checkResult = await binHasItems(deletingBin.value.id);
-  if (!checkResult.ok) {
-    deleteError.value = checkResult.error;
-    isDeleting.value = false;
-    return;
-  }
-  if (checkResult.hasItems) {
-    deleteError.value = `"${deletingBin.value.name}" still has items attached. Remove all items before deleting this bin.`;
-    isDeleting.value = false;
-    return;
-  }
   const deleteResult = await deleteBin(deletingBin.value.id);
   isDeleting.value = false;
   if (!deleteResult.ok) {

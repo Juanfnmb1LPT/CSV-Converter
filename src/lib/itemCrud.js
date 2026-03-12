@@ -133,6 +133,15 @@ export async function deleteItem(id) {
         return { ok: false, error: 'Supabase is not configured.' };
     }
 
+    const { error: deleteVariationsError } = await supabase
+        .from('item_variations')
+        .delete()
+        .eq('item_id', normalizedId);
+
+    if (deleteVariationsError) {
+        return { ok: false, error: deleteVariationsError.message };
+    }
+
     const { error } = await supabase
         .from('items')
         .delete()

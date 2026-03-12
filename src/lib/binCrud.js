@@ -73,6 +73,37 @@ export async function deleteBin(id) {
         return { ok: false, error: 'Supabase is not configured.' };
     }
 
+    const { data: itemsInBin, error: fetchItemsError } = await supabase
+        .from('items')
+        .select('id')
+        .eq('bin_id', id);
+
+    if (fetchItemsError) {
+        return { ok: false, error: fetchItemsError.message };
+    }
+
+    const itemIds = (itemsInBin || []).map((item) => item.id).filter(Boolean);
+
+    if (itemIds.length) {
+        const { error: deleteVariationsError } = await supabase
+            .from('item_variations')
+            .delete()
+            .in('item_id', itemIds);
+
+        if (deleteVariationsError) {
+            return { ok: false, error: deleteVariationsError.message };
+        }
+
+        const { error: deleteItemsError } = await supabase
+            .from('items')
+            .delete()
+            .eq('bin_id', id);
+
+        if (deleteItemsError) {
+            return { ok: false, error: deleteItemsError.message };
+        }
+    }
+
     const { error } = await supabase
         .from('bins')
         .delete()
