@@ -53,6 +53,11 @@ This Vue app works on GitHub Pages.
 
 This repo also includes an automated Pages workflow at [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml) that builds and deploys from `main`.
 
+Set these GitHub Actions secrets before deploying:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
 In GitHub repo settings, set **Pages → Source** to **GitHub Actions** so the live site always matches the latest `main` build.
 
 After enabling it, push to `main` (or run the workflow manually from the Actions tab) to publish the latest build.
