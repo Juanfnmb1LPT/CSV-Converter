@@ -128,7 +128,7 @@ async function handleDecodedText(decodedText) {
   await stopScan();
 
   const matchedBin = bins.value.find(
-    (bin) => normalizeValue(bin.id) === normalizeValue(scannedValue)
+    (bin) => normalizeValue(bin.id) === normalizeValue(scannedValue) || normalizeValue(bin.name) === normalizeValue(scannedValue)
   );
 
   if (matchedBin) {
