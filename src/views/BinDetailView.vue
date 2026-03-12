@@ -215,6 +215,13 @@ function toggleItem(itemId) {
   };
 }
 
+function formatPrice(value) {
+  if (value === null || value === undefined || value === '') return '—';
+  const n = Number(value);
+  if (Number.isNaN(n)) return String(value);
+  return n.toFixed(2);
+}
+
 function itemVariations(itemId) {
   return variationsByItemId.value[itemId] || [];
 }
