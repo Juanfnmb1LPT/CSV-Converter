@@ -9,18 +9,22 @@ const route = useRoute();
 const username = ref('');
 const password = ref('');
 const errorMessage = ref('');
+const isSubmitting = ref(false);
 
-function onSubmit() {
+async function onSubmit() {
   errorMessage.value = '';
+  isSubmitting.value = true;
 
-  const isValid = loginWithCredentials(username.value, password.value);
-  if (!isValid) {
-    errorMessage.value = 'Invalid username or password.';
+  const result = await loginWithCredentials(username.value, password.value);
+  if (!result.ok) {
+    errorMessage.value = result.error || 'Invalid username or password.';
+    isSubmitting.value = false;
     return;
   }
 
   const redirectTarget = typeof route.query.redirect === 'string' ? route.query.redirect : '/';
-  router.replace(redirectTarget);
+  await router.replace(redirectTarget);
+  isSubmitting.value = false;
 }
 </script>
 
@@ -40,7 +44,9 @@ function onSubmit() {
 
       <p v-if="errorMessage" class="login-error" role="alert">{{ errorMessage }}</p>
 
-      <button class="btn login-submit" type="submit">Sign In</button>
+      <button class="btn login-submit" type="submit" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
+      </button>
     </form>
   </div>
 </template>
