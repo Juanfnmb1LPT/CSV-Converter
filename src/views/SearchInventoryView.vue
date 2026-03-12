@@ -32,6 +32,53 @@ const isDeleting = ref(false);
 const deleteError = ref("");
 const deleteConfirmMessage = ref("");
 
+function normalizeQuantityTotal(value, fallback = 0) {
+  const parsedValue = Number(value);
+  return Number.isFinite(parsedValue) ? parsedValue : fallback;
+}
+
+async function fetchBinsWithTotals() {
+  const withTotalsResult = await supabase
+    .from("bins")
+    .select("id, name, total_quantity")
+    .order("id", { ascending: true });
+
+  if (
+    withTotalsResult.error &&
+    /total_quantity|column/i.test(withTotalsResult.error.message || "")
+  ) {
+    const fallbackResult = await supabase
+      .from("bins")
+      .select("id, name")
+      .order("id", { ascending: true });
+
+    return { ...fallbackResult, includesTotals: false };
+  }
+
+  return { ...withTotalsResult, includesTotals: true };
+}
+
+async function fetchItemsWithTotals() {
+  const withTotalsResult = await supabase
+    .from("items")
+    .select("id, name, bin_id, total_quantity")
+    .order("name", { ascending: true });
+
+  if (
+    withTotalsResult.error &&
+    /total_quantity|column/i.test(withTotalsResult.error.message || "")
+  ) {
+    const fallbackResult = await supabase
+      .from("items")
+      .select("id, name, bin_id")
+      .order("name", { ascending: true });
+
+    return { ...fallbackResult, includesTotals: false };
+  }
+
+  return { ...withTotalsResult, includesTotals: true };
+}
+
 function normalizeValue(value) {
   return String(value || "")
     .trim()
@@ -316,22 +363,45 @@ async function loadBins() {
   errorMessage.value = "";
 
   const [
-    { data: binData, error: binError },
-    { data: itemData, error: itemError },
-  ] = await Promise.all([
-    supabase.from("bins").select("id, name").order("id", { ascending: true }),
-    supabase
-      .from("items")
-      .select("id, name, bin_id")
-      .order("name", { ascending: true }),
-  ]);
+    { data: binData, error: binError, includesTotals: binsIncludeTotals },
+    { data: itemData, error: itemError, includesTotals: itemsIncludeTotals },
+  ] = await Promise.all([fetchBinsWithTotals(), fetchItemsWithTotals()]);
 
   if (binError || itemError) {
     errorMessage.value =
       binError?.message || itemError?.message || "Unable to load bins.";
     bins.value = [];
   } else {
-    const itemsByBinId = (itemData || []).reduce((groupedItems, item) => {
+    let variationTotalsByItemId = {};
+
+    if (!binsIncludeTotals || !itemsIncludeTotals) {
+      const { data: variationData, error: variationError } = await supabase
+        .from("item_variations")
+        .select("item_id, quantity");
+
+      if (variationError) {
+        errorMessage.value = variationError.message;
+        bins.value = [];
+        isLoading.value = false;
+        return;
+      }
+
+      variationTotalsByItemId = (variationData || []).reduce((groupedTotals, variation) => {
+        const previousTotal = groupedTotals[variation.item_id] || 0;
+        groupedTotals[variation.item_id] =
+          previousTotal + normalizeQuantityTotal(variation.quantity);
+        return groupedTotals;
+      }, {});
+    }
+
+    const normalizedItems = (itemData || []).map((item) => ({
+      ...item,
+      total_quantity: itemsIncludeTotals
+        ? normalizeQuantityTotal(item.total_quantity)
+        : normalizeQuantityTotal(variationTotalsByItemId[item.id]),
+    }));
+
+    const itemsByBinId = normalizedItems.reduce((groupedItems, item) => {
       if (!groupedItems[item.bin_id]) {
         groupedItems[item.bin_id] = [];
       }
@@ -340,10 +410,21 @@ async function loadBins() {
       return groupedItems;
     }, {});
 
-    bins.value = (binData || []).map((bin) => ({
-      ...bin,
-      items: itemsByBinId[bin.id] || [],
-    }));
+    bins.value = (binData || []).map((bin) => {
+      const groupedItems = itemsByBinId[bin.id] || [];
+      const computedBinTotal = groupedItems.reduce(
+        (runningTotal, item) => runningTotal + normalizeQuantityTotal(item.total_quantity),
+        0,
+      );
+
+      return {
+        ...bin,
+        total_quantity: binsIncludeTotals
+          ? normalizeQuantityTotal(bin.total_quantity)
+          : computedBinTotal,
+        items: groupedItems,
+      };
+    });
   }
 
   isLoading.value = false;
@@ -419,8 +500,9 @@ onUnmounted(stopScan);
           :to="`/search-inventory/${bin.id}`"
         >
           <div class="inventory-bin-name">{{ bin.name }}</div>
+          <div class="inventory-bin-total">Total quantity: {{ bin.total_quantity ?? 0 }}</div>
 
-          <div class="inventory-bin-summary">Items:</div>
+          <div class="inventory-bin-summary">Items: {{ bin.items.length }}</div>
 
           <ul class="inventory-preview-list">
             <li v-for="item in bin.items" :key="item.id">{{ item.name }}</li>
@@ -693,6 +775,11 @@ onUnmounted(stopScan);
 
 .inventory-bin-summary {
   color: #4b5563;
+}
+
+.inventory-bin-total {
+  font-weight: 700;
+  color: #0f1f46;
 }
 
 .inventory-preview-list {

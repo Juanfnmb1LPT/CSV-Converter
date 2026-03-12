@@ -72,27 +72,6 @@ Routing uses hash mode (`/#/`) so direct page refresh works on GitHub Pages with
 - `/#/search-inventory` Search inventory page
 - `/#/search-inventory/:id` Bin detail and item/variation management page
 
-## Supabase inventory schema
-
-Inventory management expects these tables:
-
-- `bins` with `id` and `name`
-- `items` with `id`, `name`, and `bin_id`
-- `item_variations` with `id`, `item_id`, `item_name`, `quantity`, `price`, `sku`, `color`, `style`, and `size`
-
-If your `item_variations` table does not already have a stable `id` column, apply the migration in `supabase/migrations/20260312_add_item_variation_ids.sql` before using variation edit/delete.
-
-If your `item_variations` table does not already have a `price` column, apply the migration in `supabase/migrations/20260312_add_item_variation_price.sql` before creating or editing variation prices. The app expects `price` to be `numeric(10, 2)` with a default of `0`.
-
-## QR scanning for bins
-
-- Use the camera button on Search Inventory to scan a physical bin QR label.
-- Use the `Print QR Label` action on each bin card in Search Inventory to generate printable labels.
-- QR payload should be the plain bin ID only (example: `bin-1`), not a full URL.
-- On successful scan, the app fills the search input and auto-navigates when an exact bin ID match is found.
-- If there is no exact match, the scan result remains in the search box so users can pick from filtered results.
-- Camera access requires a secure context in production (HTTPS). `localhost` works during development.
-
 The app uses a persistent left dashboard for navigation between all pages.
 
 ## Project structure
