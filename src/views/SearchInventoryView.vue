@@ -4,6 +4,9 @@ import QRCode from "qrcode";
 import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { hasSupabaseConfig, supabase } from "../lib/supabase";
+import { createBin, updateBinName, binHasItems, deleteBin } from "../lib/binCrud";
+import BinFormModal from "../components/BinFormModal.vue";
+import ConfirmModal from "../components/ConfirmModal.vue";
 
 const router = useRouter();
 const searchTerm = ref("");
@@ -17,6 +20,17 @@ const printingBinId = ref("");
 
 let scannerInstance = null;
 let hasHandledDecode = false;
+
+const showCreateModal = ref(false);
+const showEditModal = ref(false);
+const editingBin = ref(null);
+const isSaving = ref(false);
+const modalError = ref("");
+const showDeleteConfirm = ref(false);
+const deletingBin = ref(null);
+const isDeleting = ref(false);
+const deleteError = ref("");
+const deleteConfirmMessage = ref("");
 
 function normalizeValue(value) {
   return String(value || "")
@@ -219,6 +233,77 @@ const filteredBins = computed(() => {
   });
 });
 
+function openCreate() {
+  modalError.value = "";
+  showCreateModal.value = true;
+}
+
+function openEdit(bin) {
+  editingBin.value = bin;
+  modalError.value = "";
+  showEditModal.value = true;
+}
+
+function openDelete(bin) {
+  deletingBin.value = bin;
+  deleteError.value = "";
+  deleteConfirmMessage.value = `Delete "${bin.name}"? This action cannot be undone.`;
+  showDeleteConfirm.value = true;
+}
+
+async function onCreateSubmit({ name }) {
+  isSaving.value = true;
+  modalError.value = "";
+  const result = await createBin(name);
+  isSaving.value = false;
+  if (!result.ok) {
+    modalError.value = result.error;
+    return;
+  }
+  showCreateModal.value = false;
+  await loadBins();
+}
+
+async function onEditSubmit({ name }) {
+  isSaving.value = true;
+  modalError.value = "";
+  const result = await updateBinName(editingBin.value.id, name);
+  isSaving.value = false;
+  if (!result.ok) {
+    modalError.value = result.error;
+    return;
+  }
+  showEditModal.value = false;
+  editingBin.value = null;
+  await loadBins();
+}
+
+async function onDeleteConfirm() {
+  deleteError.value = "";
+  isDeleting.value = true;
+  const checkResult = await binHasItems(deletingBin.value.id);
+  if (!checkResult.ok) {
+    deleteError.value = checkResult.error;
+    isDeleting.value = false;
+    return;
+  }
+  if (checkResult.hasItems) {
+    deleteError.value = `"${deletingBin.value.name}" still has items attached. Remove all items before deleting this bin.`;
+    isDeleting.value = false;
+    return;
+  }
+  const deleteResult = await deleteBin(deletingBin.value.id);
+  isDeleting.value = false;
+  if (!deleteResult.ok) {
+    deleteError.value = deleteResult.error;
+    return;
+  }
+  showDeleteConfirm.value = false;
+  deletingBin.value = null;
+  deleteConfirmMessage.value = "";
+  await loadBins();
+}
+
 async function loadBins() {
   if (!hasSupabaseConfig || !supabase) {
     errorMessage.value =
@@ -275,6 +360,9 @@ onUnmounted(stopScan);
       <div class="hero-sub reveal-fade-up reveal-delay-1">
         Search bins by ID or name from Supabase inventory data.
       </div>
+      <button class="btn reveal-fade-up reveal-delay-2" type="button" @click="openCreate">
+        + Create Bin
+      </button>
     </div>
 
     <div class="inventory-search-panel reveal-fade-up reveal-delay-1">
@@ -355,6 +443,12 @@ onUnmounted(stopScan);
                 : "Print QR Label"
             }}
           </button>
+          <button class="inventory-print-button" type="button" @click="openEdit(bin)">
+            Edit
+          </button>
+          <button class="inventory-delete-btn" type="button" @click="openDelete(bin)">
+            Delete
+          </button>
         </div>
       </article>
 
@@ -365,6 +459,36 @@ onUnmounted(stopScan);
         No bins matched that search.
       </div>
     </div>
+
+    <BinFormModal
+      v-if="showCreateModal"
+      mode="create"
+      :is-saving="isSaving"
+      :error-message="modalError"
+      @submit="onCreateSubmit"
+      @cancel="showCreateModal = false; modalError = ''"
+    />
+
+    <BinFormModal
+      v-if="showEditModal"
+      mode="edit"
+      :initial-bin="editingBin"
+      :is-saving="isSaving"
+      :error-message="modalError"
+      @submit="onEditSubmit"
+      @cancel="showEditModal = false; editingBin = null; modalError = ''"
+    />
+
+    <ConfirmModal
+      v-if="showDeleteConfirm"
+      title="Delete Bin"
+      :message="deleteConfirmMessage"
+      confirm-label="Delete"
+      :is-loading="isDeleting"
+      :error-message="deleteError"
+      @confirm="onDeleteConfirm"
+      @cancel="showDeleteConfirm = false; deletingBin = null; deleteError = ''; deleteConfirmMessage = ''"
+    />
   </div>
 </template>
 
@@ -524,7 +648,25 @@ onUnmounted(stopScan);
 .inventory-bin-actions {
   margin-top: auto;
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: flex-end;
+}
+
+.inventory-delete-btn {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  background: rgba(255, 238, 238, 0.95);
+  color: #991b1b;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.inventory-delete-btn:hover {
+  background: rgba(255, 220, 220, 0.95);
+  border-color: rgba(220, 38, 38, 0.35);
 }
 
 .inventory-print-button {

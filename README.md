@@ -13,6 +13,8 @@ All parsing and processing runs locally in the browser. No file data is uploaded
 - Excel uploads use the first sheet and first row as headers, then flatten to row-based data
 - Client-side parsing via PapaParse (CSV) and SheetJS (Excel)
 - Search Inventory with QR scan support for bin lookup and auto-navigation
+- Bin CRUD from Search Inventory
+- Item and variation CRUD from the Bin Detail page
 
 ## Run locally
 
@@ -68,7 +70,19 @@ Routing uses hash mode (`/#/`) so direct page refresh works on GitHub Pages with
 - `/#/shopify-to-square` Shopify → Square tool
 - `/#/update-quantity` Update Shopify quantity tool
 - `/#/search-inventory` Search inventory page
-- `/#/search-inventory/:id` Bin detail page
+- `/#/search-inventory/:id` Bin detail and item/variation management page
+
+## Supabase inventory schema
+
+Inventory management expects these tables:
+
+- `bins` with `id` and `name`
+- `items` with `id`, `name`, and `bin_id`
+- `item_variations` with `id`, `item_id`, `item_name`, `quantity`, `price`, `sku`, `color`, `style`, and `size`
+
+If your `item_variations` table does not already have a stable `id` column, apply the migration in `supabase/migrations/20260312_add_item_variation_ids.sql` before using variation edit/delete.
+
+If your `item_variations` table does not already have a `price` column, apply the migration in `supabase/migrations/20260312_add_item_variation_price.sql` before creating or editing variation prices. The app expects `price` to be `numeric(10, 2)` with a default of `0`.
 
 ## QR scanning for bins
 
@@ -88,9 +102,14 @@ The app uses a persistent left dashboard for navigation between all pages.
 - `src/views/PostConView.vue` Post-conversion checklist page
 - `src/views/ShopifyToSquareView.vue` Shopify → Square UI
 - `src/views/UpdateQuantityView.vue` Quantity update UI
+- `src/views/SearchInventoryView.vue` Bin search and bin CRUD UI
+- `src/views/BinDetailView.vue` Bin detail plus item and variation CRUD UI
 - `src/lib/convertShopToSquare.js` Shopify → Square transformation logic
 - `src/lib/updateInventoryFromSquare.js` Quantity sync logic
 - `src/lib/downloadCsv.js` Browser CSV download helper
+- `src/lib/binCrud.js` Bin CRUD helpers
+- `src/lib/itemCrud.js` Item CRUD helpers
+- `src/lib/variationCrud.js` Variation CRUD helpers
 - `src/router/index.js` Vue Router setup
 - `styles.css` Shared styling
 
