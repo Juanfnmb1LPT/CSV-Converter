@@ -7,6 +7,7 @@ const PreConView = () => import('../views/PreConView.vue');
 const PostConView = () => import('../views/PostConView.vue');
 const ShopifyToSquareView = () => import('../views/ShopifyToSquareView.vue');
 const UpdateQuantityView = () => import('../views/UpdateQuantityView.vue');
+const UpdateInventoryView = () => import('../views/UpdateInventoryView.vue');
 const SearchInventoryView = () => import('../views/SearchInventoryView.vue');
 const BinDetailView = () => import('../views/BinDetailView.vue');
 
@@ -19,6 +20,7 @@ const router = createRouter({
         { path: '/post-con', name: 'post-con', component: PostConView, meta: { requiresAuth: true } },
         { path: '/shopify-to-square', name: 'shopify-to-square', component: ShopifyToSquareView, meta: { requiresAuth: true } },
         { path: '/update-quantity', name: 'update-quantity', component: UpdateQuantityView, meta: { requiresAuth: true } },
+        { path: '/update-inventory', name: 'update-inventory', component: UpdateInventoryView, meta: { requiresAuth: true } },
         { path: '/search-inventory', name: 'search-inventory', component: SearchInventoryView, meta: { requiresAuth: true } },
         { path: '/search-inventory/:id', name: 'bin-detail', component: BinDetailView, meta: { requiresAuth: true } },
         { path: '/:pathMatch(.*)*', redirect: '/' },

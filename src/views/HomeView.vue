@@ -28,7 +28,7 @@
         </p>
         <div class="home-options home-options-advanced">
           <router-link class="btn" to="/shopify-to-square">Shopify to Square</router-link>
-          <router-link class="btn secondary" to="/update-quantity">Update Quantity</router-link>
+          <router-link class="btn secondary" to="/update-quantity">Update Shopify Quantity</router-link>
         </div>
       </section>
     </div>
