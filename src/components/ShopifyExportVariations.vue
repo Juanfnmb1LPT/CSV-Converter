@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+const props = defineProps({ compact: { type: Boolean, default: false } });
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
 import { downloadCsv } from '../lib/downloadCsv';
 
@@ -130,7 +131,7 @@ async function exportShopifyFromVariations() {
 </script>
 
 <template>
-  <div class="card spacious tool-card export-shopify-card reveal-fade-up">
+  <div v-if="!props.compact" class="card spacious tool-card export-shopify-card reveal-fade-up">
     <div class="export-header">
       <div class="export-title">Export item_variations → Shopify CSV</div>
       <div class="export-sub">Exports the `item_variations` table with minimal Shopify fields for testing.</div>
@@ -143,6 +144,10 @@ async function exportShopifyFromVariations() {
       <div v-if="error" class="export-error">{{ error }}</div>
     </div>
   </div>
+
+  <button v-else class="btn" :disabled="isProcessing" @click="exportShopifyFromVariations">
+    {{ isProcessing ? 'Exporting…' : 'Export Shopify CSV' }}
+  </button>
 </template>
 
 <style scoped>
@@ -152,4 +157,7 @@ async function exportShopifyFromVariations() {
 .export-sub { font-size: 13px; color: #374151; }
 .export-actions { display:flex; gap:12px; align-items:center; }
 .export-error { color: #b91c1c; font-size: 13px; }
+
+.export-compact { display: inline-flex; align-items: center; }
+.export-compact .btn { min-height: 40px; padding: 8px 12px; }
 </style>

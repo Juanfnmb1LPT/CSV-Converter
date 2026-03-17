@@ -18,7 +18,7 @@ function findHeader(fields, candidates) {
   return null;
 }
 
-export async function updateDatabaseFromSquareFile(file) {
+export async function updateDatabaseFromShopifyFile(file) {
   if (!file) throw new Error('No file provided.');
   if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured.');
 
@@ -28,13 +28,13 @@ export async function updateDatabaseFromSquareFile(file) {
 
   if (!rows.length) throw new Error('The uploaded file appears empty.');
 
-  const skuHeader = findHeader(fields, ['sku', 'SKU']);
-  // We need to match headers that contain the words "current quantity" anywhere.
-  const currentQtyHeader = fields.find((h) => String(h || '').toLowerCase().includes('current quantity')) || null;
+  const skuHeader = findHeader(fields, ['Variant SKU', 'SKU']);
+  const variantQtyHeader = findHeader(fields, ['Variant Inventory Qty']);
+  const onHandHeader = findHeader(fields, ['On hand (new)', 'On hand', 'On Hand']);
 
   const missing = [];
-  if (!skuHeader) missing.push('SKU');
-  if (!currentQtyHeader) missing.push('Current Quantity (header containing "Current Quantity")');
+  if (!skuHeader) missing.push('Variant SKU');
+  if (!variantQtyHeader && !onHandHeader) missing.push('Variant Inventory Qty or On hand (new)');
   if (missing.length) {
     throw new Error(`Missing required header(s): ${missing.join(', ')}`);
   }
@@ -43,11 +43,15 @@ export async function updateDatabaseFromSquareFile(file) {
   const invalidQty = [];
   let updatedCount = 0;
 
+  // iterate rows and update DB per SKU
   for (const row of rows) {
     const sku = String(row[skuHeader] || '').trim();
     if (!sku) continue;
 
-    const qtyStr = String(row[currentQtyHeader] || '').trim();
+    const rawQty = variantQtyHeader ? String(row[variantQtyHeader] || '').trim() : '';
+    const altQty = onHandHeader ? String(row[onHandHeader] || '').trim() : '';
+    const qtyStr = (rawQty !== '' ? rawQty : altQty);
+
     if (qtyStr === '') {
       invalidQty.push({ sku, reason: 'quantity column empty' });
       continue;
@@ -83,4 +87,3 @@ export async function updateDatabaseFromSquareFile(file) {
     invalidQty,
   };
 }
-

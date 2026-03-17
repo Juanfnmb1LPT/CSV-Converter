@@ -446,9 +446,10 @@ onUnmounted(stopScan);
       <div class="hero-sub reveal-fade-up reveal-delay-1">
         Search bins by ID or name from Supabase inventory data.
       </div>
-      <button class="btn reveal-fade-up reveal-delay-2" type="button" @click="openCreate">
-        + Create Bin
-      </button>
+      <div class="hero-actions reveal-fade-up reveal-delay-2">
+        <ShopifyExportVariations compact />
+        <button class="btn" type="button" @click="openCreate">+ Create Bin</button>
+      </div>
     </div>
 <div class="inventory-total">Total item types: {{ totalVariations === null ? '—' : totalVariations }}</div>
     <div class="inventory-search-panel reveal-fade-up reveal-delay-1">
@@ -489,7 +490,6 @@ onUnmounted(stopScan);
     </div>
 
     <div class="inventory-grid reveal-fade-up reveal-delay-2">
-      <ShopifyExportVariations />
       <div v-if="isLoading" class="inventory-empty-state">Loading bins...</div>
 
       <div v-else-if="errorMessage" class="inventory-empty-state">
@@ -659,6 +659,26 @@ onUnmounted(stopScan);
   text-align: left;
   color: #4b5563;
   font-size: 14px;
+}
+
+.inventory-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inventory-hero .hero-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .inventory-hero .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .inventory-scan-error {

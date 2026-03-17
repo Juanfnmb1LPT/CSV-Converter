@@ -33,7 +33,7 @@ function handleLogout() {
     <header v-if="shouldShowShell" class="mobile-topbar">
       <div class="mobile-topbar-brand">
         <img :src="logoUrl" alt="LPT Realty logo" width="44" height="44" />
-        <div class="mobile-topbar-title">CSV Converter</div>
+        <div class="mobile-topbar-title">Shop²</div>
       </div>
 
       <button
@@ -53,7 +53,7 @@ function handleLogout() {
       <div class="dashboard-header">
         <div class="dashboard-brand">
           <img :src="logoUrl" alt="LPT Realty logo" width="88" height="88" />
-          <div class="dashboard-title">CSV Converter</div>
+          <div class="dashboard-title">Shop²</div>
         </div>
 
         <button
@@ -72,8 +72,9 @@ function handleLogout() {
         <router-link class="dash-link" to="/pre-con" @click="closeNav">Pre-Con Steps</router-link>
         <router-link class="dash-link" to="/post-con" @click="closeNav">Post-Con Steps</router-link>
         <router-link class="dash-link" to="/shopify-to-square" @click="closeNav">Shopify to Square</router-link>
-        <router-link class="dash-link" to="/update-quantity" @click="closeNav">Update Quantity</router-link>
+        <router-link class="dash-link" to="/update-quantity" @click="closeNav">Update Shopify Quantity</router-link>
         <router-link class="dash-link" to="/search-inventory" @click="closeNav">Search Inventory</router-link>
+        <router-link class="dash-link" to="/update-inventory" @click="closeNav">Update Inventory</router-link>
         <button class="dash-link" type="button" @click="handleLogout">Logout</button>
       </nav>
     </aside>
