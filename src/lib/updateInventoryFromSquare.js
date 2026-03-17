@@ -1,3 +1,4 @@
+import Papa from 'papaparse';
 import { parseUploadedTable } from './parseUploadedTable';
 import { hasSupabaseConfig, supabase } from './supabase';
 
@@ -18,6 +19,85 @@ function findHeader(fields, candidates) {
   return null;
 }
 
+function normalizeSku(value) {
+  return String(value || '').trim();
+}
+
+function parseQuantity(rawValue) {
+  const qty = Number(String(rawValue || '').trim());
+  return Number.isFinite(qty) ? qty : null;
+}
+
+function findSquareQuantityHeader(fields) {
+  return fields.find((h) => String(h || '').toLowerCase().includes('current quantity')) || null;
+}
+
+export async function buildUpdatedShopifyInventoryData(shopifyFile, squareFile) {
+  if (!shopifyFile || !squareFile) {
+    throw new Error('Please provide both Shopify and Square files.');
+  }
+
+  const shopifyResults = await parseUploadedTable(shopifyFile);
+  const squareResults = await parseUploadedTable(squareFile);
+
+  const shopifyFields = shopifyResults.meta?.fields || [];
+  const squareFields = squareResults.meta?.fields || [];
+  const shopifyRows = shopifyResults.data || [];
+  const squareRows = squareResults.data || [];
+
+  if (!shopifyRows.length) throw new Error('The Shopify file appears empty.');
+  if (!squareRows.length) throw new Error('The Square file appears empty.');
+
+  const shopifySkuHeader = findHeader(shopifyFields, ['Variant SKU', 'SKU']);
+  const shopifyQtyHeader = findHeader(shopifyFields, ['Variant Inventory Qty', 'On hand (new)', 'On hand', 'On Hand']);
+  const squareSkuHeader = findHeader(squareFields, ['SKU', 'sku']);
+  const squareQtyHeader = findSquareQuantityHeader(squareFields);
+
+  const missing = [];
+  if (!shopifySkuHeader) missing.push('Shopify Variant SKU');
+  if (!shopifyQtyHeader) missing.push('Shopify Variant Inventory Qty (or On hand)');
+  if (!squareSkuHeader) missing.push('Square SKU');
+  if (!squareQtyHeader) missing.push('Square header containing "Current Quantity"');
+  if (missing.length) {
+    throw new Error(`Missing required header(s): ${missing.join(', ')}`);
+  }
+
+  const squareQtyBySku = new Map();
+  for (const row of squareRows) {
+    const sku = normalizeSku(row[squareSkuHeader]);
+    if (!sku) continue;
+
+    const qty = parseQuantity(row[squareQtyHeader]);
+    if (qty === null) continue;
+    squareQtyBySku.set(sku, qty);
+  }
+
+  const updatedRows = [];
+  const allRows = shopifyRows.map((row) => {
+    const sku = normalizeSku(row[shopifySkuHeader]);
+    if (!sku || !squareQtyBySku.has(sku)) return { ...row };
+
+    const nextRow = { ...row, [shopifyQtyHeader]: String(squareQtyBySku.get(sku)) };
+    updatedRows.push(nextRow);
+    return nextRow;
+  });
+
+  return {
+    headers: shopifyFields,
+    rows: updatedRows,
+    allRows,
+  };
+}
+
+export async function updateShopifyInventoryCsv(shopifyFile, squareFile) {
+  const { headers, allRows } = await buildUpdatedShopifyInventoryData(shopifyFile, squareFile);
+
+  return Papa.unparse({
+    fields: headers,
+    data: allRows.map((row) => headers.map((header) => row[header] ?? '')),
+  });
+}
+
 export async function updateDatabaseFromSquareFile(file) {
   if (!file) throw new Error('No file provided.');
   if (!hasSupabaseConfig || !supabase) throw new Error('Supabase is not configured.');
@@ -30,7 +110,7 @@ export async function updateDatabaseFromSquareFile(file) {
 
   const skuHeader = findHeader(fields, ['sku', 'SKU']);
   // We need to match headers that contain the words "current quantity" anywhere.
-  const currentQtyHeader = fields.find((h) => String(h || '').toLowerCase().includes('current quantity')) || null;
+  const currentQtyHeader = findSquareQuantityHeader(fields);
 
   const missing = [];
   if (!skuHeader) missing.push('SKU');
