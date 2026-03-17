@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "build:gh-pages": "vite build --base=/CSV-Converter/",
+        "build:gh-pages": "vite build --base=/Shop-Squared/",
         "build:docs": "vite build --outDir docs",
         "preview": "vite preview"
     },
