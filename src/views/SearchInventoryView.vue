@@ -451,7 +451,7 @@ onUnmounted(stopScan);
         <button class="btn" type="button" @click="openCreate">+ Create Bin</button>
       </div>
     </div>
-<div class="inventory-total">Total item types: {{ totalVariations === null ? '—' : totalVariations }}</div>
+<div class="inventory-total">Total Item Types: {{ totalVariations === null ? '—' : totalVariations }}</div>
     <div class="inventory-search-panel reveal-fade-up reveal-delay-1">
       <label class="inventory-search-label" for="inventory-search-input"
         >Search bins</label
@@ -501,29 +501,27 @@ onUnmounted(stopScan);
         :key="bin.id"
         class="inventory-bin-card"
       >
-        <router-link
-          class="inventory-bin-link"
-          :to="`/search-inventory/${bin.id}`"
-        >
-          <div class="inventory-bin-name">{{ bin.name }}</div>
-          <div class="inventory-bin-total">Total quantity: {{ bin.total_quantity ?? 0 }}</div>
+        <router-link class="inventory-bin-full" :to="`/search-inventory/${bin.id}`">
+          <div class="inventory-bin-link">
+            <div class="inventory-bin-name">{{ bin.name }}</div>
+            <div class="inventory-bin-total">Total quantity: {{ bin.total_quantity ?? 0 }}</div>
 
-          <div class="inventory-bin-summary">Items: {{ bin.items.length }}</div>
+            <div class="inventory-bin-summary">Items: {{ bin.items.length }}</div>
 
-          <ul class="inventory-preview-list">
-            <li v-for="item in bin.items" :key="item.id">{{ item.name }}</li>
-            <li v-if="!bin.items.length" class="inventory-preview-empty">
-              No items in this bin.
-            </li>
-          </ul>
-        </router-link>
+            <ul class="inventory-preview-list">
+              <li v-for="item in bin.items" :key="item.id">{{ item.name }}</li>
+              <li v-if="!bin.items.length" class="inventory-preview-empty">
+                No items in this bin.
+              </li>
+            </ul>
+          </div>
 
-        <div class="inventory-bin-actions">
+          <div class="inventory-bin-actions">
           <button
             class="inventory-print-button"
             type="button"
             :disabled="printingBinId === String(bin.id)"
-            @click="printBinQr(bin)"
+            @click.stop="printBinQr(bin)"
           >
             {{
               printingBinId === String(bin.id)
@@ -531,13 +529,20 @@ onUnmounted(stopScan);
                 : "Print QR Label"
             }}
           </button>
-          <button class="inventory-print-button" type="button" @click="openEdit(bin)">
+          <button class="inventory-print-button" type="button" @click.stop="openEdit(bin)">
             Edit
           </button>
-          <button class="inventory-delete-btn" type="button" @click="openDelete(bin)">
-            Delete
+          <button class="inventory-delete-btn" type="button" @click.stop="openDelete(bin)" :aria-label="`Delete ${bin.name}`" title="Delete bin">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M3 6h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </button>
-        </div>
+          </div>
+        </router-link>
       </article>
 
       <div
@@ -617,6 +622,11 @@ onUnmounted(stopScan);
 .inventory-total {  
   text-align: center;
   font-weight: bold;
+}
+
+/* reduce space between the total line and the hero action buttons */
+.inventory-total {
+  margin-top: 6px;
 }
 
 .inventory-search-input {
@@ -729,15 +739,17 @@ onUnmounted(stopScan);
   min-height: 180px;
   padding: 22px 20px;
   border-radius: 18px;
-  border: 1px solid rgba(18, 58, 138, 0.1);
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 16px 34px rgba(14, 42, 99, 0.08);
+  border: 1px solid rgba(11, 99, 214, 0.06);
+  background: linear-gradient(180deg, #ffffff 0%, #f6fbff 100%);
+  box-shadow: 0 12px 22px rgba(14, 42, 99, 0.035);
 }
 
 .inventory-bin-card {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  position: relative;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
 }
 
 .inventory-bin-link {
@@ -746,28 +758,43 @@ onUnmounted(stopScan);
   gap: 12px;
   color: inherit;
   text-decoration: none;
-  transition: transform 0.16s ease, border-color 0.16s ease,
-    box-shadow 0.16s ease, background-color 0.16s ease;
+  position: relative;
 }
 
-.inventory-bin-link:hover {
-  transform: translateY(-4px);
-  border-color: rgba(37, 99, 235, 0.2);
-  background: rgba(231, 239, 255, 0.92);
-  box-shadow: 0 20px 38px rgba(14, 42, 99, 0.1);
+.inventory-bin-full {
+  display: block;
+  color: inherit;
+  text-decoration: none;
 }
+
+/* apply the hover effect to the whole card */
+.inventory-bin-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(37, 99, 235, 0.12);
+  background: rgba(237, 245, 252, 0.95);
+  box-shadow: 0 14px 28px rgba(14, 42, 99, 0.06);
+}
+
+/* removed overlay; using full-card router-link instead */
 
 .inventory-bin-actions {
   margin-top: auto;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 2;
+  padding-top: 12px;
 }
 
 .inventory-delete-btn {
-  min-height: 40px;
-  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
   border-radius: 12px;
   border: 1px solid rgba(220, 38, 38, 0.2);
   background: rgba(255, 238, 238, 0.95);

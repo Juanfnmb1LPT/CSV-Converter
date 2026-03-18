@@ -483,9 +483,17 @@ onMounted(loadBinDetail);
         </div>
 
         <div class="inventory-detail-header-actions">
-          <button class="btn secondary" type="button" @click="openEdit">Edit</button>
-          <button class="inventory-action-delete-btn" type="button" @click="openDelete">Delete</button>
-          <router-link class="btn secondary" to="/search-inventory">Back to Search</router-link>
+          <button class="btn secondary" type="button" @click="openEdit">Edit Bin</button>
+          <button class="inventory-action-delete-btn" type="button" @click="openDelete" :aria-label="`Delete ${bin.name}`" title="Delete bin">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M3 6h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <router-link class="btn secondary" to="/search-inventory">Back</router-link>
         </div>
       </div>
 
@@ -505,7 +513,7 @@ onMounted(loadBinDetail);
               <button class="inventory-item-toggle" type="button" @click="toggleItem(item.id)">
                 <span class="inventory-item-name-shell">
                   <span class="inventory-item-name">{{ item.name }}</span>
-                  <span class="inventory-item-total">Total: {{ item.total_quantity ?? 0 }}</span>
+                  <span class="inventory-item-total"> Item Quantity: {{ item.total_quantity ?? 0 }}</span>
                 </span>
                 <span class="inventory-item-toggle-label">
                   {{ expandedItems[item.id] ? 'Hide variations' : 'Show variations' }}
@@ -519,8 +527,14 @@ onMounted(loadBinDetail);
                 <button class="inventory-entity-button" type="button" @click="openEditItem(item)">
                   Edit
                 </button>
-                <button class="inventory-entity-delete" type="button" @click="openDeleteItem(item)">
-                  Delete
+                <button class="inventory-entity-delete" type="button" @click="openDeleteItem(item)" :aria-label="`Delete ${item.name}`" title="Delete item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M3 6h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -541,8 +555,14 @@ onMounted(loadBinDetail);
                     <button class="inventory-entity-button" type="button" @click="openEditVariation(item, variation)">
                       Edit
                     </button>
-                    <button class="inventory-entity-delete" type="button" @click="openDeleteVariation(item, variation)">
-                      Delete
+                    <button class="inventory-entity-delete" type="button" @click="openDeleteVariation(item, variation)" :aria-label="`Delete variation ${variation.sku || variation.id}`" title="Delete variation">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M3 6h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 11v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -685,14 +705,20 @@ onMounted(loadBinDetail);
 }
 
 .inventory-action-delete-btn {
-  min-height: 46px;
-  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  width: 46px;
+  padding: 0;
   border-radius: 12px;
   border: 1px solid rgba(220, 38, 38, 0.2);
   background: rgba(255, 238, 238, 0.95);
   color: #991b1b;
   font-weight: 700;
   cursor: pointer;
+    flex: 0 0 auto;
+    min-width: 40px;
 }
 
 .inventory-action-delete-btn:hover {
@@ -784,22 +810,30 @@ onMounted(loadBinDetail);
 .inventory-entity-button,
 .inventory-entity-delete {
   min-height: 38px;
-  padding: 0 12px;
   border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .inventory-entity-button {
+  padding: 0 12px;
   border: 1px solid rgba(18, 58, 138, 0.18);
   background: rgba(230, 240, 255, 0.95);
   color: #0a2b67;
 }
 
 .inventory-entity-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
   border: 1px solid rgba(220, 38, 38, 0.2);
   background: rgba(255, 238, 238, 0.95);
   color: #991b1b;
+  flex: 0 0 auto;
+  min-width: 34px;
 }
 
 .inventory-item-name {
@@ -878,13 +912,24 @@ onMounted(loadBinDetail);
 }
 
 @media (max-width: 640px) {
+  /* Keep title and actions on the same row when possible, allow wrapping */
   .inventory-detail-header {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* Allow the title block to shrink so actions can sit beside it */
+  .inventory-detail-header > div:first-child {
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .inventory-detail-header-actions {
     justify-content: flex-start;
+    flex: 0 0 auto;
+    gap: 8px;
   }
 
   .inventory-detail-section-header,
@@ -901,8 +946,8 @@ onMounted(loadBinDetail);
 
   .inventory-detail-header .btn,
   .inventory-action-delete-btn {
-    width: 100%;
-    max-width: 320px;
+    width: auto;
+    max-width: 220px;
   }
 
   .inventory-item-toggle {
@@ -912,6 +957,58 @@ onMounted(loadBinDetail);
 
   .inventory-variation-card {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Keep header actions horizontally aligned and compact on very small screens */
+@media (max-width: 480px) {
+  .inventory-detail-header {
+    /* title stacked above actions but keep actions inline */
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .inventory-detail-header-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .inventory-detail-header .btn,
+  .inventory-detail-header .btn.secondary {
+    height: 34px;
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: auto;
+    max-width: none;
+  }
+
+  .inventory-action-delete-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    padding: 0;
+  }
+
+  .inventory-action-delete-btn svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+    min-width: 14px;
+    min-height: 14px;
+  }
+
+  .inventory-entity-delete svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+    min-width: 14px;
+    min-height: 14px;
   }
 }
 </style>
