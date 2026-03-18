@@ -105,7 +105,7 @@ async function onUpdateSquare() {
     </div>
 
     <div class="update-grid">
-      <section class="update-column">
+      <section class="update-column reveal-fade-up reveal-delay-1">
         <h3>Shopify → Database</h3>
 
         <div class="note">
@@ -129,7 +129,7 @@ async function onUpdateSquare() {
             <div v-if="error" class="note" style="margin-top:10px;color:#b91c1c">{{ error }}</div>
       </section>
 
-      <section class="update-column">
+      <section class="update-column reveal-fade-up reveal-delay-1">
         <h3>Square → Database</h3>
 
         <div class="note">
@@ -162,27 +162,47 @@ async function onUpdateSquare() {
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   margin-top: 16px;
+  width: 100%;
+  max-width: 840px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
 }
 
 .update-column {
   background: var(--card-bg, #fff);
-  border-radius: 6px;
+  border-radius: 12px;
   padding: 14px;
   box-shadow: var(--card-elev, none);
+  border: 1px solid rgba(11, 99, 214, 0.18);
+  min-width: 0;
 }
 
 .file-control {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 12px;
+  margin: 12px auto 0;
+  justify-content: center;
+  width: min(100%, 320px);
+  max-width: 320px;
+  min-width: 0;
 }
 
 .file-control .file-btn {
-  background: var(--btn-bg, #1f6feb);
-  color: white;
-  padding: 8px 10px;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  height: 26px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .file-control input[type="file"] {
@@ -196,12 +216,47 @@ async function onUpdateSquare() {
 }
 
 .action-row {
-  margin-top: 14px;
+  margin: 14px auto 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 320px);
+  max-width: 320px;
+  min-width: 0;
+}
+
+.action-row .btn {
+  flex: 0 0 auto;
+  display: block;
+  width: 100%;
+}
+
+.update-column h3 {
+  text-align: center;
+  margin-top: 0;
+}
+
+.update-column .note {
+  text-align: center;
+}
+
+.update-column .note ol {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  list-style-position: outside;
+  display: inline-block;
+  text-align: left;
+}
+
+.update-column .note ol li {
+  margin: 4px 0;
 }
 
 @media (max-width: 900px) {
   .update-grid {
     grid-template-columns: 1fr;
   }
+  .update-column .note ol { padding-left: 14px; }
 }
 </style>
